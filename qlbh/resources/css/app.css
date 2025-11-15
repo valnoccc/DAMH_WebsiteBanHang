@@ -1,0 +1,44 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+	/* Semantic color variables for quick use */
+	--color-primary: #8b5cf6; /* primary-500 */
+	--color-primary-600: #7c3aed;
+	--color-accent: #f97316; /* accent-500 */
+	--color-teal: #14b8a6; /* teal-500 */
+	--ui-surface: #ffffff;
+	--ui-muted: #64748b;
+}
+
+/* Apply a subtle global background that's bright and modern and set Inter as default */
+html, body {
+	background: linear-gradient(180deg, #ffffff 0%, #fffbeb 100%);
+	color: #0f172a;
+	font-family: 'Inter', 'Figtree', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+}
+
+/* Button utility using CSS vars */
+.btn-primary {
+	background-color: var(--color-primary);
+	color: white;
+	padding: 0.6rem 1.2rem;
+	border-radius: 9999px;
+	font-weight: 800;
+	transition: transform .18s ease, box-shadow .18s ease, background-color .18s ease;
+}
+.btn-primary:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 10px 30px rgba(139,92,246,0.15); }
+
+/* Card surface */
+.card-surface { background: var(--ui-surface); border-radius: 12px; box-shadow: 0 6px 18px rgba(15,23,42,0.06); }
+
+/* Text selection color */
+::selection { background: var(--color-primary-600); color: white; }
+
+/* Utilities for subtle animated dots used in hero */
+@keyframes pulse-soft { 0% { transform: scale(0.95); opacity: .6 } 50% { transform: scale(1.05); opacity: .9 } 100% { transform: scale(0.95); opacity: .6 } }
+.animate-pulse { animation: pulse-soft 3s infinite; }
+

@@ -3,7 +3,6 @@ import AppLayout from '@/Layouts/AppLayout';
 import { useState } from 'react';
 import { router } from '@inertiajs/react';
 
-
 export default function ProductDetail({ product }) {
     const [mainImage, setMainImage] = useState(product.hinh_anh?.[0]?.url || '/images/placeholder.png');
     const [selectedSize, setSelectedSize] = useState(null);
@@ -13,6 +12,14 @@ export default function ProductDetail({ product }) {
     // Lấy các size từ biến thể sản phẩm
     const sizes = [...new Set(product.bien_the?.map(b => b.size) || [])];
     const colors = [...new Set(product.bien_the?.map(b => b.color) || [])];
+
+    // === LOGIC MỚI: Tìm biến thể và lấy tồn kho ===
+    const selectedVariant = product.bien_the?.find(
+        (v) => v.size === selectedSize && v.color === selectedColor
+    );
+    // Nếu chưa chọn đủ size/màu thì là null, nếu chọn rồi thì lấy số lượng
+    const currentStock = selectedVariant ? selectedVariant.so_luong_ton : null;
+    // =============================================
 
     const handleAddToCart = () => {
         if (!selectedSize) {
@@ -25,15 +32,22 @@ export default function ProductDetail({ product }) {
             return;
         }
 
-        // Tìm biến thể phù hợp (size + color)
-        const variant = product.bien_the?.find(
-            (v) => v.size === selectedSize && v.color === selectedColor
-        );
-
-        if (!variant) {
+        if (!selectedVariant) {
             alert('Phiên bản sản phẩm không tồn tại!');
             return;
         }
+
+        // === LOGIC MỚI: Kiểm tra tồn kho trước khi gửi ===
+        if (selectedVariant.so_luong_ton <= 0) {
+            alert('Sản phẩm này đã hết hàng!');
+            return;
+        }
+        
+        if (quantity > selectedVariant.so_luong_ton) {
+             alert(`Chỉ còn ${selectedVariant.so_luong_ton} sản phẩm trong kho!`);
+             return;
+        }
+        // =============================================
 
         // Lấy ảnh sản phẩm
         const productImage = product.hinh_anh?.[0]?.url || '/images/placeholder.png';
@@ -51,7 +65,7 @@ export default function ProductDetail({ product }) {
             size: selectedSize,
             color: selectedColor,
             quantity: quantity,
-            gia_ban: variant.gia_ban,
+            gia_ban: selectedVariant.gia_ban,
             ten_san_pham: product.ten_san_pham,
             hinh_anh_url: productImage,
         }, {
@@ -147,7 +161,7 @@ export default function ProductDetail({ product }) {
                         {/* Giá */}
                         <div className="mb-6 flex items-baseline gap-4">
                             <span className="text-2xl font-black bg-gradient-to-r from-primary-600 to-accent-500 bg-clip-text text-transparent">
-                                {product.gia_goc?.toLocaleString('vi-VN')}₫
+                                {(selectedVariant ? selectedVariant.gia_ban : product.gia_goc)?.toLocaleString('vi-VN')}₫
                             </span>
                             {product.gia_khuyen_mai && product.gia_khuyen_mai < product.gia_goc && (
                                 <span className="text-xl text-gray-400 line-through">
@@ -209,7 +223,24 @@ export default function ProductDetail({ product }) {
                             </div>
                         )}
 
-                        {/* Số lượng */}
+                        {/* Hiển thị tồn kho */}
+                        <div className="mb-3 h-6">
+                             {selectedSize && selectedColor ? (
+                                currentStock > 0 ? (
+                                    <span className="font-bold text-sm">
+                                        Còn {currentStock} sản phẩm
+                                    </span>
+                                ) : (
+                                    <span className="text-red-600 font-bold text-sm">
+                                        Hết hàng
+                                    </span>
+                                )
+                            ) : (
+                                <span className="text-gray-400 text-sm italic">Vui lòng chọn phân loại hàng</span>
+                            )}
+                        </div>
+
+                        {/* Số lượng Input */}
                         <div className="mb-3">
                             <label className="block text-lg font-bold text-gray-900 mb-3">
                                 Số lượng
@@ -217,38 +248,66 @@ export default function ProductDetail({ product }) {
                             <div className="flex items-center gap-3">
                                 <button
                                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                                    className="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors font-bold text-lg"
+                                    disabled={currentStock === 0} 
+                                    className="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors font-bold text-lg disabled:opacity-50"
                                 >
                                     −
                                 </button>
                                 <input
                                     type="number"
                                     value={quantity}
-                                    onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
-                                    className="w-20 px-3 py-2 text-center border-2 border-gray-300 rounded-lg focus:border-primary-600 focus:outline-none font-bold text-lg"
+                                    onChange={(e) => {
+                                        const val = parseInt(e.target.value) || 1;
+                                        if (currentStock !== null && val > currentStock) {
+                                            setQuantity(currentStock);
+                                        } else {
+                                            setQuantity(Math.max(1, val));
+                                        }
+                                    }}
+                                    disabled={currentStock === 0}
+                                    className="w-20 px-3 py-2 text-center border-2 border-gray-300 rounded-lg focus:border-primary-600 focus:outline-none font-bold text-lg disabled:bg-gray-100"
                                 />
                                 <button
-                                    onClick={() => setQuantity(quantity + 1)}
-                                    className="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors font-bold text-lg"
+                                    onClick={() => {
+                                        if (currentStock !== null && quantity >= currentStock) return;
+                                        setQuantity(quantity + 1);
+                                    }}
+                                    disabled={currentStock === 0 || (currentStock !== null && quantity >= currentStock)}
+                                    className="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors font-bold text-lg disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
                                     +
                                 </button>
                             </div>
                         </div>
 
-                        {/* Nút thêm vào giỏ */}
                         <div className="flex gap-4 mb-8">
-                            <button className="px-6 py-4 bg-gradient-to-tr from-orange-400 to-yellow-400 text-black font-bold rounded-lg 
-    hover:from-yellow-500 hover:to-yellow-500 transition-all">
+                            <button
+                                // Nếu bạn muốn xử lý Mua Ngay sau này, thêm onClick ở đây
+                                onClick={handleAddToCart} 
+                                disabled={currentStock === 0 || (!selectedSize || !selectedColor)}
+                                className={`px-6 py-4 bg-gradient-to-tr from-orange-400 to-yellow-400 text-black font-bold rounded-lg 
+                                    hover:from-yellow-500 hover:to-yellow-500 transition-all w-full md:w-auto
+                                    ${(currentStock === 0 || (!selectedSize || !selectedColor)) ? 'opacity-50 cursor-not-allowed' : ''}
+                                `}
+                            >
                                 Mua ngay
                             </button>
+
+                            {/* 2. Nút Thêm vào giỏ: Đã sửa lại font-bold */}
                             <button
                                 onClick={handleAddToCart}
-                                className=" px-6 py-4 bg-gray-100 text-gray-700 font-black text-lg rounded-lg hover:bg-gray-200 transition-all"
+                                disabled={currentStock === 0 || (!selectedSize || !selectedColor)}
+                                className={`px-6 py-4 font-bold rounded-lg transition-all w-full md:w-auto 
+                                    ${currentStock === 0 
+                                        ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
+                                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                    }`}
                             >
-                                Thêm vào giỏ hàng
+                                {currentStock === 0 ? 'Tạm hết hàng' : 'Thêm vào giỏ hàng'}
                             </button>
-                            <button className="px-6 py-4 bg-gray-100 text-gray-700 font-bold rounded-lg hover:bg-gray-200 transition-all">
+                            
+                            {/* 3. Nút Yêu thích */}
+                            <button className="px-6 py-4 bg-gray-100 text-gray-700 font-bold rounded-lg hover:bg-gray-200 transition-all w-full md:w-auto">
                                 Yêu thích
                             </button>
                         </div>
@@ -259,10 +318,16 @@ export default function ProductDetail({ product }) {
                                 <span>Mã sản phẩm:</span>
                                 <span className="font-semibold text-gray-900">SP-{product.id}</span>
                             </div>
+                            {selectedVariant && (
+                                <div className="flex justify-between">
+                                    <span>Mã SKU:</span>
+                                    <span className="font-semibold text-gray-900">{selectedVariant.sku}</span>
+                                </div>
+                            )}
                             <div className="flex justify-between">
                                 <span>Trạng thái:</span>
-                                <span className="inline-block px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-semibold">
-                                    Có sẵn
+                                <span className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${currentStock === 0 ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`}>
+                                    {currentStock === 0 ? 'Hết hàng' : 'Có sẵn'}
                                 </span>
                             </div>
                             <div className="flex justify-between">
@@ -273,7 +338,7 @@ export default function ProductDetail({ product }) {
                     </div>
                 </div>
 
-                {/* ===== PHẦN MÔ TẢ CHI TIẾT ===== */}
+                {/* ===== PHẦN MÔ TẢ CHI TIẾT (Giữ nguyên) ===== */}
                 <div className="mt-16 border-t-2 border-gray-300 pt-8">
                     <h2 className="text-3xl font-black text-gray-900 mb-6">Chi tiết sản phẩm</h2>
 
@@ -308,7 +373,7 @@ export default function ProductDetail({ product }) {
                                 <li>Đổi trả trong 7 ngày</li>
                                 <li>Giao hàng toàn quốc</li>
                                 <li>Hỗ trợ 24/7</li>
-                                <li>hanh toán an toàn</li>
+                                <li>Thanh toán an toàn</li>
                             </ul>
                         </div>
                     </div>

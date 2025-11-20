@@ -12,6 +12,9 @@ class DonHang extends Model
     protected $table = 'DonHang';
     public $timestamps = false; // Bảng này chỉ có created_at, không có updated_at
 
+    // Cho phép lưu tất cả các cột (hoặc bạn có thể liệt kê từng cột như trên)
+    protected $guarded = [];
+
     // Quan hệ: 1 đơn hàng thuộc 1 người dùng
     public function user()
     {

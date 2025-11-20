@@ -19,8 +19,9 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'phone', // <--- THÊM DÒNG NÀY
         'password',
-        'role',
+        'role', // (Nếu bạn có cột role)
     ];
 
     /**

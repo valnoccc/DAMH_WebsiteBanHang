@@ -11,11 +11,11 @@ export default function UpdateProfileInformation({
 }) {
     const user = usePage().props.auth.user;
 
-    const { data, setData, patch, errors, processing, recentlySuccessful } =
-        useForm({
-            name: user.name,
-            email: user.email,
-        });
+    const { data, setData, patch, errors, processing, recentlySuccessful } = useForm({
+        name: user.name,
+        email: user.email,
+        phone: user.phone || '', // <--- THÊM DÒNG NÀY: Lấy sđt cũ hoặc rỗng
+    });
 
     const submit = (e) => {
         e.preventDefault();
@@ -54,6 +54,20 @@ export default function UpdateProfileInformation({
                         autoComplete="username"
                     />
                     <InputError className="mt-2" message={errors.email} />
+                </div>
+                <div className="mt-4">
+                    <InputLabel htmlFor="phone" value="Số điện thoại" />
+
+                    <TextInput
+                        id="phone"
+                        className="mt-1 block w-full"
+                        value={data.phone}
+                        onChange={(e) => setData('phone', e.target.value)}
+                        autoComplete="tel"
+                        placeholder="Nhập số điện thoại của bạn"
+                    />
+
+                    <InputError className="mt-2" message={errors.phone} />
                 </div>
 
                 {/* Email Verification Notice */}

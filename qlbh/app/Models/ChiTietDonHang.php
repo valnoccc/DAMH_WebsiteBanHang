@@ -12,6 +12,14 @@ class ChiTietDonHang extends Model
     protected $table = 'ChiTietDonHang';
     public $timestamps = false; // Bảng này không có timestamps
 
+    // --- THÊM ĐOẠN NÀY ---
+    protected $fillable = [
+        'don_hang_id',
+        'bien_the_id',
+        'so_luong',
+        'don_gia',
+    ];
+    
     // Quan hệ: 1 chi tiết thuộc 1 đơn hàng
     public function donHang()
     {

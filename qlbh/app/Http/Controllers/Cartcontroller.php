@@ -3,134 +3,185 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
+use App\Models\GioHang;
+use App\Models\BienTheSanPham;
 use App\Models\SanPham;
 
 class CartController extends Controller
 {
     /**
-     * Display the shopping cart.
+     * Hiển thị giỏ hàng
      */
     public function index()
     {
-        $cart = session()->get('cart', []);
-        $cartItems = $cart;
-        $total = 0;
-        $itemCount = count($cartItems);
-
-        // If some items lack image URL (older sessions), try to fetch from DB and persist
-        $updated = false;
-        foreach ($cartItems as $key => $item) {
-            // Tính tổng giá (use values already present)
-            $total += ($item['gia_ban'] ?? 0) * ($item['quantity'] ?? 0);
-
-            if (empty($item['hinh_anh_url']) && !empty($item['san_pham_id'])) {
-                $sp = SanPham::with('hinh_anh')->find($item['san_pham_id']);
-                if ($sp && !empty($sp->hinh_anh) && isset($sp->hinh_anh[0]->url)) {
-                    $cartItems[$key]['hinh_anh_url'] = $sp->hinh_anh[0]->url;
-                    // persist back to session for future
-                    $cart[$key]['hinh_anh_url'] = $sp->hinh_anh[0]->url;
-                    $updated = true;
-                }
-            }
+        // 1. Nếu chưa đăng nhập -> Chuyển hướng Login
+        if (!Auth::check()) {
+             return redirect()->route('login')->with('error', 'Vui lòng đăng nhập để xem giỏ hàng.');
         }
 
-        if ($updated) {
-            session()->put('cart', $cart);
+        // 2. Lấy giỏ hàng từ Database của User hiện tại
+        $cartItemsRaw = GioHang::with(['bienThe.sanPham', 'bienThe.hinhAnh'])
+            ->where('user_id', Auth::id())
+            ->get();
+
+        // 3. Format lại dữ liệu cho khớp với Frontend React (CartItems đang mong đợi)
+        // Frontend đang dùng dạng Object { key: item }, ta sẽ chuyển đổi sang dạng đó hoặc Mảng tùy logic FE
+        // Ở đây để đơn giản và khớp với code React 'Object.entries(cartItems)', ta trả về dạng Mảng Key-Value
+        $cartItems = [];
+        $total = 0;
+
+        foreach ($cartItemsRaw as $item) {
+            // Tạo key duy nhất (giống logic session cũ để React không bị lỗi key)
+            $itemKey = $item->bienThe->san_pham_id . '_' . $item->bienThe->size . '_' . $item->bienThe->color;
+            
+            // Lấy ảnh: ưu tiên ảnh biến thể, nếu không có lấy ảnh sản phẩm gốc
+            $imgUrl = '/images/placeholder.png';
+            if ($item->bienThe->hinh_anh) {
+                $imgUrl = $item->bienThe->hinh_anh->url;
+            } elseif ($item->bienThe->sanPham && $item->bienThe->sanPham->hinhAnh->count() > 0) {
+                $imgUrl = $item->bienThe->sanPham->hinhAnh->first()->url;
+            }
+
+            $cartItems[$itemKey] = [
+                'id' => $item->id, // ID của dòng trong bảng GioHang (để xóa/sửa)
+                'san_pham_id' => $item->bienThe->san_pham_id,
+                'ten_san_pham' => $item->bienThe->sanPham->ten_san_pham ?? 'Sản phẩm lỗi',
+                'size' => $item->bienThe->size,
+                'color' => $item->bienThe->color,
+                'gia_ban' => $item->bienThe->gia_ban,
+                'quantity' => $item->so_luong,
+                'hinh_anh_url' => $imgUrl,
+                'bien_the_id' => $item->bien_the_id
+            ];
+
+            $total += $item->so_luong * $item->bienThe->gia_ban;
         }
 
         return Inertia::render('Cart/Index', [
-            'cartItems' => $cartItems,
+            'cartItems' => $cartItems, // Trả về Object/Array key-value
             'total' => $total,
-            'itemCount' => $itemCount,
+            'itemCount' => count($cartItems),
         ]);
     }
 
     /**
-     * Add a product to cart.
+     * Thêm vào giỏ hàng (Lưu DB)
      */
     public function store(Request $request)
     {
+        if (!Auth::check()) {
+            return redirect()->route('login');
+        }
+
         $validated = $request->validate([
             'san_pham_id' => 'required|integer',
             'size' => 'required|string',
             'color' => 'required|string',
             'quantity' => 'required|integer|min:1',
-            'gia_ban' => 'required|numeric',
-            'ten_san_pham' => 'required|string',
-            'hinh_anh_url' => 'nullable|string',
         ]);
 
-        $cart = session()->get('cart', []);
-        
-        // Tạo unique key cho item (product + size + color)
-        $itemKey = $validated['san_pham_id'] . '_' . $validated['size'] . '_' . $validated['color'];
+        // 1. Tìm biến thể
+        $variant = BienTheSanPham::where('san_pham_id', $validated['san_pham_id'])
+            ->where('size', $validated['size'])
+            ->where('color', $validated['color'])
+            ->first();
 
-        // Nếu item đã tồn tại, cộng quantity
-        if (isset($cart[$itemKey])) {
-            $cart[$itemKey]['quantity'] += $validated['quantity'];
-            // Cập nhật ảnh nếu có
-            if (!empty($validated['hinh_anh_url'])) {
-                $cart[$itemKey]['hinh_anh_url'] = $validated['hinh_anh_url'];
-            }
+        if (!$variant) {
+            return back()->with('error', 'Phiên bản sản phẩm không tồn tại.');
+        }
+
+        // 2. Kiểm tra tồn kho
+        if ($variant->so_luong_ton < $validated['quantity']) {
+            return back()->with('error', 'Số lượng tồn kho không đủ.');
+        }
+
+        // 3. Tìm xem đã có trong giỏ chưa
+        $cartItem = GioHang::where('user_id', Auth::id())
+            ->where('bien_the_id', $variant->id)
+            ->first();
+
+        if ($cartItem) {
+            $cartItem->so_luong += $validated['quantity'];
+            $cartItem->save();
         } else {
-            // Thêm item mới
-            $cart[$itemKey] = [
-                'san_pham_id' => $validated['san_pham_id'],
-                'ten_san_pham' => $validated['ten_san_pham'],
-                'size' => $validated['size'],
-                'color' => $validated['color'],
-                'gia_ban' => $validated['gia_ban'],
-                'quantity' => $validated['quantity'],
-                'hinh_anh_url' => $validated['hinh_anh_url'] ?? null,
-            ];
+            GioHang::create([
+                'user_id' => Auth::id(),
+                'bien_the_id' => $variant->id,
+                'so_luong' => $validated['quantity'],
+            ]);
         }
 
-        session()->put('cart', $cart);
-
-        return redirect()->back()->with('success', 'Đã thêm vào giỏ hàng!');
+        return back()->with('success', 'Đã thêm vào giỏ hàng!');
     }
 
     /**
-     * Update quantity of item in cart.
+     * Cập nhật số lượng
      */
-    public function update(Request $request, string $itemKey)
+    public function update(Request $request, $itemKey)
     {
-        $validated = $request->validate([
-            'quantity' => 'required|integer|min:1',
-        ]);
+        // itemKey ở đây có thể là ID của bảng GioHang (nếu React gửi ID)
+        // HOẶC là chuỗi 'id_size_color' (nếu React gửi key cũ).
+        // Tốt nhất là sửa React để gửi ID. Nhưng nếu React gửi Key cũ, ta phải parse.
+        
+        // Giả sử itemKey ở đây là string 'spId_size_color', ta cần tìm lại biến thể để update
+        // TUY NHIÊN: Cách tối ưu nhất là Frontend nên gửi ID của bản ghi GioHang.
+        // Để code chạy được với Frontend hiện tại (gửi key ghép), ta sẽ làm như sau:
 
-        $cart = session()->get('cart', []);
+        $parts = explode('_', $itemKey);
+        if (count($parts) == 3) {
+            $spId = $parts[0];
+            $size = $parts[1];
+            $color = $parts[2];
 
-        if (isset($cart[$itemKey])) {
-            $cart[$itemKey]['quantity'] = $validated['quantity'];
-            session()->put('cart', $cart);
+            $variant = BienTheSanPham::where('san_pham_id', $spId)
+                ->where('size', $size)
+                ->where('color', $color)
+                ->first();
+
+            if ($variant) {
+                GioHang::where('user_id', Auth::id())
+                    ->where('bien_the_id', $variant->id)
+                    ->update(['so_luong' => $request->quantity]);
+            }
         }
 
-        return redirect()->back()->with('success', 'Cập nhật số lượng thành công!');
+        return back();
     }
 
     /**
-     * Remove an item from cart.
+     * Xóa sản phẩm
      */
-    public function destroy(string $itemKey)
+    public function destroy($itemKey)
     {
-        $cart = session()->get('cart', []);
+        // Tương tự update, parse key 'spId_size_color'
+        $parts = explode('_', $itemKey);
+        if (count($parts) == 3) {
+            $spId = $parts[0];
+            $size = $parts[1];
+            $color = $parts[2];
 
-        if (isset($cart[$itemKey])) {
-            unset($cart[$itemKey]);
-            session()->put('cart', $cart);
+            $variant = BienTheSanPham::where('san_pham_id', $spId)
+                ->where('size', $size)
+                ->where('color', $color)
+                ->first();
+
+            if ($variant) {
+                GioHang::where('user_id', Auth::id())
+                    ->where('bien_the_id', $variant->id)
+                    ->delete();
+            }
         }
-
-        return redirect()->back()->with('success', 'Đã xóa khỏi giỏ hàng!');
+        return back()->with('success', 'Đã xóa sản phẩm!');
     }
 
     /**
-     * Clear entire cart.
+     * Xóa toàn bộ
      */
     public function clear()
     {
-        session()->forget('cart');
-        return redirect()->back()->with('success', 'Giỏ hàng đã được xóa!');
+        GioHang::where('user_id', Auth::id())->delete();
+        return back()->with('success', 'Giỏ hàng đã được làm trống!');
     }
 }

@@ -1,31 +1,18 @@
 import { Link, usePage } from '@inertiajs/react';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { router } from '@inertiajs/react';
 // Import icon
-import { FaSearch, FaUser, FaShoppingCart, FaCartPlus } from 'react-icons/fa';
+import { FaSearch, FaUser, FaShoppingCart } from 'react-icons/fa';
 
 // Đây là Layout chung cho các trang
 export default function AppLayout({ children }) {
-    const { auth } = usePage().props;
+    // 1. Lấy thông tin User và Số lượng giỏ hàng từ Backend (Middleware)
+    const { auth, cartCount } = usePage().props;
+    
     const [profileOpen, setProfileOpen] = useState(false);
-    const [cartCount, setCartCount] = useState(0);
 
-    useEffect(() => {
-        // Lấy số lượng item từ session storage
-        const cart = JSON.parse(sessionStorage.getItem('cart') || '{}');
-        const count = Object.keys(cart).length;
-        setCartCount(count);
-
-        // Listen for cart updates
-        const handleCartUpdate = () => {
-            const updatedCart = JSON.parse(sessionStorage.getItem('cart') || '{}');
-            const updatedCount = Object.keys(updatedCart).length;
-            setCartCount(updatedCount);
-        };
-
-        window.addEventListener('cartUpdated', handleCartUpdate);
-        return () => window.removeEventListener('cartUpdated', handleCartUpdate);
-    }, []);
+    // 2. ĐÃ XÓA HOÀN TOÀN useEffect và sessionStorage ở đây
+    // Để badge số lượng luôn đồng bộ 100% với Database
 
     return (
         <div className="min-h-screen bg-white font-sans">
@@ -37,7 +24,7 @@ export default function AppLayout({ children }) {
                         MinhBell Fashion
                     </Link>
 
-                    {/* 2. Thanh Tìm Kiếm (Giống Moji) */}
+                    {/* 2. Thanh Tìm Kiếm */}
                     <div className="relative w-1/2 hidden md:block">
                         <input
                             type="text"
@@ -62,33 +49,33 @@ export default function AppLayout({ children }) {
                                 {/* Dropdown Menu */}
                                 {profileOpen && (
                                     <div id="profile-dropdown" className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border-2 border-primary-200 py-2 z-50" onClick={(e) => e.stopPropagation()}>
-                                        <div className="px-4 py-3 border-b border-gray-200">
-                                            <p className="text-gray-800 font-semibold text-sm">{auth.user.name}</p>
-                                            <p className="text-gray-500 text-xs">{auth.user.email}</p>
-                                        </div>
+                                            <div className="px-4 py-3 border-b border-gray-200">
+                                                <p className="text-gray-800 font-semibold text-sm">{auth.user.name}</p>
+                                                <p className="text-gray-500 text-xs">{auth.user.email}</p>
+                                            </div>
 
-                                        <Link
-                                            href="/profile"
-                                            className="block px-4 py-3 text-gray-700 hover:bg-primary-50 hover:text-primary-600 font-semibold transition-all"
-                                        >
-                                            Hồ sơ cá nhân
-                                        </Link>
+                                            <Link
+                                                href="/profile"
+                                                className="block px-4 py-3 text-gray-700 hover:bg-primary-50 hover:text-primary-600 font-semibold transition-all"
+                                            >
+                                                Hồ sơ cá nhân
+                                            </Link>
 
-                                        <Link
-                                            href="/orders"
-                                            className="block px-4 py-3 text-gray-700 hover:bg-primary-50 hover:text-primary-600 font-semibold transition-all"
-                                        >
-                                            Đơn hàng của tôi
-                                        </Link>
+                                            <Link
+                                                href="/orders" // Bạn cần tạo trang này sau
+                                                className="block px-4 py-3 text-gray-700 hover:bg-primary-50 hover:text-primary-600 font-semibold transition-all"
+                                            >
+                                                Đơn hàng của tôi
+                                            </Link>
 
-                                        <button
-                                            onClick={() => {
-                                                router.post('/logout');
-                                            }}
-                                            className="w-full text-left px-4 py-3 text-red-600 hover:bg-red-50 font-semibold transition-all border-t border-gray-200"
-                                        >
-                                            Đăng xuất
-                                        </button>
+                                            <button
+                                                onClick={() => {
+                                                    router.post('/logout');
+                                                }}
+                                                className="w-full text-left px-4 py-3 text-red-600 hover:bg-red-50 font-semibold transition-all border-t border-gray-200"
+                                            >
+                                                Đăng xuất
+                                            </button>
                                     </div>
                                 )}
                             </div>
@@ -110,14 +97,17 @@ export default function AppLayout({ children }) {
                             </div>
                         )}
 
+                        {/* Icon Giỏ Hàng */}
                         <Link
                             href="/cart"
                             className="relative flex items-center justify-center w-8 h-8 hover:scale-125 transition-all text-gray-400"
                         >
                             <FaShoppingCart size={24} />
+                            
+                            {/* Badge số lượng (Lấy từ Database qua Props) */}
                             {cartCount > 0 && (
                                 <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
-                                    {cartCount}
+                                    {cartCount > 99 ? '99+' : cartCount}
                                 </span>
                             )}
                         </Link>
@@ -130,7 +120,6 @@ export default function AppLayout({ children }) {
                         <Link href="/" className="font-semibold hover:text-gray-300">Trang chủ</Link>
                         <Link href="/san-pham" className="font-semibold hover:text-gray-300">Sản phẩm</Link>
 
-                        {/* Đây là các link quan trọng, trỏ đến ID danh mục cha */}
                         <Link href="/san-pham?danh_muc_id=1" className="font-semibold hover:text-gray-300">Thời trang nam</Link>
                         <Link href="/san-pham?danh_muc_id=2" className="font-semibold hover:text-gray-300">Thời trang nữ</Link>
                         <Link href="/san-pham?danh_muc_id=3" className="font-semibold hover:text-gray-300">Phụ kiện</Link>
@@ -142,7 +131,7 @@ export default function AppLayout({ children }) {
                 </nav>
             </header>
 
-            {/* ======== NỘI DUNG TRANG SẼ ĐƯỢC CHÈN VÀO ĐÂY ======== */}
+            {/* ======== NỘI DUNG TRANG ======== */}
             <main>
                 {children}
             </main>
@@ -150,7 +139,11 @@ export default function AppLayout({ children }) {
             {/* ======== FOOTER ======== */}
             <footer className="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 text-white py-16 mt-20">
                 <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
-                    {/* Col 1 */}
+                    {/* Col 1 (Logo hoặc giới thiệu ngắn - đang để trống theo code cũ) */}
+                     <div className='mx-auto'>
+                         <h4 className="text-lg font-black text-white mb-4">VỀ CHÚNG TÔI</h4>
+                         <p className="text-gray-300">Thương hiệu thời trang uy tín hàng đầu.</p>
+                     </div>
 
                     {/* Col 2 */}
                     <div className='mx-auto'>

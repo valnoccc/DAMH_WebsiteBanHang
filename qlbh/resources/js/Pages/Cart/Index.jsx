@@ -200,16 +200,20 @@ export default function CartIndex({ cartItems, total, itemCount }) {
                                 </div>
 
                                 <div className="space-y-3 pt-6">
-                                    <button className="w-full py-3 bg-blue-600 text-white font-black rounded-lg hover:from-primary-700 hover:to-accent-600 transition-all hover:scale-105 shadow-lg">
+                                    <Link
+                                        // SỬA DÒNG NÀY: Dùng route() thay vì string cứng
+                                        href="/checkout"
+                                        className="block w-full py-3 bg-blue-600 text-white font-black text-center rounded-lg hover:from-primary-700 hover:to-accent-600 transition-all hover:scale-105 shadow-lg"
+                                    >
                                         Thanh Toán Ngay
-                                    </button>
+                                    </Link>
                                     <Link
                                         href="/san-pham"
                                         className="block text-center py-3 bg-white border-2 border-blue-600 text-blue-600 font-bold rounded-lg hover:bg-blue-50 transition-all"
                                     >
                                         Tiếp tục mua sắm
                                     </Link>
-                                </div>                       
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -225,7 +229,7 @@ export default function CartIndex({ cartItems, total, itemCount }) {
                         </p>
                         <Link
                             href="/san-pham"
-                            className="inline-block py-4 px-10 bg-gradient-to-r from-primary-600 to-accent-500 text-white font-black rounded-lg hover:from-primary-700 hover:to-accent-600 transition-all hover:scale-105 shadow-lg text-lg"
+                            className="inline-block py-4 px-10 bg-blue-600 text-white font-black rounded-lg hover:from-primary-700 hover:to-accent-600 transition-all hover:scale-105 shadow-lg text-lg"
                         >
                             Bắt Đầu Mua Sắm
                         </Link>

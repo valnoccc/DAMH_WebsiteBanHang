@@ -4,6 +4,7 @@ import React from 'react';
 import UpdateProfileInformationForm from './Partials/UpdateProfileInformationForm';
 import UpdatePasswordForm from './Partials/UpdatePasswordForm';
 import DeleteUserForm from './Partials/DeleteUserForm';
+import { TiUser } from "react-icons/ti";
 
 export default function Edit({ mustVerifyEmail, status }) {
     return (
@@ -20,8 +21,8 @@ export default function Edit({ mustVerifyEmail, status }) {
                     <div className="lg:col-span-1">
                         <div className="bg-white rounded-2xl shadow-lg p-8 sticky top-24">
                             <div className="text-center">
-                                <div className="w-24 h-24 mx-auto mb-4 rounded-full bg-gradient-to-br from-primary-600 to-accent-500 flex items-center justify-center text-white text-5xl">
-                                    👤
+                                <div className="w-24 h-24 mx-auto mb-4 rounded-full bg-blue-500 flex items-center justify-center text-white text-5xl">
+                                    <TiUser size={64}/>
                                 </div>
                                 <h3 className="text-xl font-black text-gray-800 mb-2">
                                     Tài Khoản Của Bạn

@@ -1,39 +1,90 @@
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head } from '@inertiajs/react';
-import DeleteUserForm from './Partials/DeleteUserForm';
-import UpdatePasswordForm from './Partials/UpdatePasswordForm';
+import AppLayout from '@/Layouts/AppLayout';
+import { Head, useForm } from '@inertiajs/react';
+import React from 'react';
 import UpdateProfileInformationForm from './Partials/UpdateProfileInformationForm';
+import UpdatePasswordForm from './Partials/UpdatePasswordForm';
+import DeleteUserForm from './Partials/DeleteUserForm';
 
 export default function Edit({ mustVerifyEmail, status }) {
     return (
-        <AuthenticatedLayout
-            header={
-                <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                    Profile
-                </h2>
-            }
-        >
-            <Head title="Profile" />
+        <AppLayout>
+            <Head title="Hồ Sơ Cá Nhân" />
 
-            <div className="py-12">
-                <div className="mx-auto max-w-7xl space-y-6 sm:px-6 lg:px-8">
-                    <div className="bg-white p-4 shadow sm:rounded-lg sm:p-8">
-                        <UpdateProfileInformationForm
-                            mustVerifyEmail={mustVerifyEmail}
-                            status={status}
-                            className="max-w-xl"
-                        />
+            {/* ======== HERO SECTION ======== */}
+           
+
+            {/* ======== PROFILE CONTENT ======== */}
+            <section className="container mx-auto px-4 py-16">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    {/* ======== SIDEBAR ======== */}
+                    <div className="lg:col-span-1">
+                        <div className="bg-white rounded-2xl shadow-lg p-8 sticky top-24">
+                            <div className="text-center">
+                                <div className="w-24 h-24 mx-auto mb-4 rounded-full bg-gradient-to-br from-primary-600 to-accent-500 flex items-center justify-center text-white text-5xl">
+                                    👤
+                                </div>
+                                <h3 className="text-xl font-black text-gray-800 mb-2">
+                                    Tài Khoản Của Bạn
+                                </h3>
+                                <p className="text-gray-500 text-sm mb-6">
+                                    Cập nhật thông tin cá nhân
+                                </p>
+                                <div className="space-y-3">
+                                    <div className="bg-primary-50 rounded-lg p-3">
+                                        <p className="text-xs text-gray-600 uppercase font-bold">Trạng Thái</p>
+                                        <p className="text-green-600 font-bold mt-1">Đã Xác Minh</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
-                    <div className="bg-white p-4 shadow sm:rounded-lg sm:p-8">
-                        <UpdatePasswordForm className="max-w-xl" />
-                    </div>
+                    {/* ======== MAIN CONTENT ======== */}
+                    <div className="lg:col-span-2">
+                        {/* SECTION 1: Thông Tin Cá Nhân */}
+                        <div className="bg-white rounded-2xl shadow-lg p-8 mb-8">
+                            <div className="border-b-2 border-primary-200 pb-6 mb-6">
+                                <h2 className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-accent-600">
+                                    Thông Tin Cá Nhân
+                                </h2>
+                                <p className="text-gray-600 mt-2 text-sm">
+                                    Cập nhật tên và email của bạn
+                                </p>
+                            </div>
+                            <UpdateProfileInformationForm
+                                mustVerifyEmail={mustVerifyEmail}
+                                status={status}
+                            />
+                        </div>
 
-                    <div className="bg-white p-4 shadow sm:rounded-lg sm:p-8">
-                        <DeleteUserForm className="max-w-xl" />
+                        {/* SECTION 2: Đổi Mật Khẩu */}
+                        <div className="bg-white rounded-2xl shadow-lg p-8 mb-8">
+                            <div className="border-b-2 border-primary-200 pb-6 mb-6">
+                                <h2 className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-accent-600">
+                                    Bảo Mật
+                                </h2>
+                                <p className="text-gray-600 mt-2 text-sm">
+                                    Thay đổi mật khẩu của bạn
+                                </p>
+                            </div>
+                            <UpdatePasswordForm />
+                        </div>
+
+                        {/* SECTION 3: Xóa Tài Khoản */}
+                        <div className="bg-red-50 border-2 border-red-200 rounded-2xl p-8">
+                            <div className="border-b-2 border-red-300 pb-6 mb-6">
+                                <h2 className="text-2xl font-black text-red-600">
+                                    Xóa Tài Khoản
+                                </h2>
+                                <p className="text-gray-600 mt-2 text-sm">
+                                    Xóa vĩnh viễn tài khoản của bạn
+                                </p>
+                            </div>
+                            <DeleteUserForm />
+                        </div>
                     </div>
                 </div>
-            </div>
-        </AuthenticatedLayout>
+            </section>
+        </AppLayout>
     );
 }

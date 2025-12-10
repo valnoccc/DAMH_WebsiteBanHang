@@ -9,7 +9,7 @@ class SanPham extends Model
 {
     use HasFactory;
 
-    protected $table = 'SanPham';
+    protected $table = 'sanpham';
     public $timestamps = false;
 
     // Quan hệ: 1 sản phẩm thuộc 1 danh mục

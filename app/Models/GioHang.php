@@ -9,7 +9,7 @@ class GioHang extends Model
 {
     use HasFactory;
 
-    protected $table = 'GioHang';
+    protected $table = 'giohang';
     public $timestamps = false; // Bảng này chỉ có created_at
 
     // Quan hệ: 1 giỏ hàng thuộc 1 người dùng

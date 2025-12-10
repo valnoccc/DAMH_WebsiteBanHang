@@ -9,7 +9,7 @@ class DanhMuc extends Model
 {
     use HasFactory;
 
-    protected $table = 'DanhMuc';
+    protected $table = 'danhmuc';
     public $timestamps = false;
 
     // Quan hệ: 1 danh mục có nhiều sản phẩm

@@ -9,7 +9,7 @@ class DonHang extends Model
 {
     use HasFactory;
 
-    protected $table = 'DonHang';
+    protected $table = 'donhang';
     public $timestamps = false; // Bảng này chỉ có created_at, không có updated_at
 
     // Quan hệ: 1 đơn hàng thuộc 1 người dùng

@@ -9,7 +9,7 @@ class ChiTietDonHang extends Model
 {
     use HasFactory;
 
-    protected $table = 'ChiTietDonHang';
+    protected $table = 'chitietdonhang';
     public $timestamps = false; // Bảng này không có timestamps
 
     // Quan hệ: 1 chi tiết thuộc 1 đơn hàng

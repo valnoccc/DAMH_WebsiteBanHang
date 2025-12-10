@@ -9,7 +9,7 @@ class BienTheSanPham extends Model
 {
     use HasFactory;
 
-    protected $table = 'BienTheSanPham';
+    protected $table = 'bienthesanpham';
     public $timestamps = false;
 
     // Quan hệ: 1 biến thể thuộc 1 sản phẩm

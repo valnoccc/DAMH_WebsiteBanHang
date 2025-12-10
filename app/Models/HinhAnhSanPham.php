@@ -9,7 +9,7 @@ class HinhAnhSanPham extends Model
 {
     use HasFactory;
 
-    protected $table = 'HinhAnhSanPham';
+    protected $table = 'hinhanhsanpham';
     public $timestamps = false;
 
     // Quan hệ: 1 hình ảnh thuộc 1 sản phẩm

@@ -1,7 +1,10 @@
 import React from 'react';
 import { Link, useForm } from '@inertiajs/react';
-// Giả sử bạn có AdminLayout, hãy thay thế bằng Layout thực tế của bạn
-import AdminLayout from '@/Layouts/AdminLayout'; 
+import AdminLayout from '@/Layouts/AdminLayout';
+import Pagination from '@/Components/Pagination';
+import { FaPlus } from "react-icons/fa";
+import { FaEdit } from "react-icons/fa";
+import { FaTrash } from "react-icons/fa";
 
 export default function ProductIndex({ products }) {
     const { delete: destroy } = useForm();
@@ -17,11 +20,11 @@ export default function ProductIndex({ products }) {
             <div className="p-6 bg-white shadow rounded-lg">
                 <div className="flex justify-between items-center mb-6">
                     <h1 className="text-2xl font-bold text-gray-800">Quản lý Sản phẩm</h1>
-                    <Link 
-                        href={route('admin.products.create')} 
-                        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                    <Link
+                        href={route('admin.products.create')}
+                        className="flex items-center gap-2 bg-blue-600 text-white px-5 py-2.5 rounded-lg font-bold hover:bg-blue-700 transition-all shadow-md hover:shadow-lg"
                     >
-                        + Thêm Sản phẩm
+                       <FaPlus />Thêm Sản phẩm
                     </Link>
                 </div>
 
@@ -41,30 +44,43 @@ export default function ProductIndex({ products }) {
                             <tr key={product.id} className="border-b hover:bg-gray-50">
                                 <td className="p-3">{product.id}</td>
                                 <td className="p-3">
-                                    <img 
-                                        src={product.hinh_anh?.[0]?.url || '/placeholder.png'} 
-                                        alt="" 
+                                    <img
+                                        src={product.hinh_anh?.[0]?.url || '/placeholder.png'}
+                                        alt=""
                                         className="w-12 h-12 object-cover rounded border"
                                     />
                                 </td>
                                 <td className="p-3 font-semibold">{product.ten_san_pham}</td>
                                 <td className="p-3">{product.danh_muc?.ten_danh_muc || 'N/A'}</td>
                                 <td className="p-3">{Number(product.gia_goc).toLocaleString()}đ</td>
-                                <td className="p-3 text-right space-x-2">
-                                    <button className="text-blue-600 hover:underline">Sửa</button>
-                                    <button 
-                                        onClick={() => handleDelete(product.id)} 
-                                        className="text-red-600 hover:underline"
-                                    >
-                                        Xóa
-                                    </button>
+                                <td className="p-3 text-right">              
+                                    <div className="flex items-center justify-end gap-2">
+
+                                        <Link
+                                            href={route('admin.products.edit', product.id)}
+                                           className="p-2 bg-white border border-gray-200 text-blue-600 rounded-lg hover:bg-blue-50 hover:border-blue-200 transition-all shadow-sm"
+                                        >
+                                            <FaEdit />
+                                        </Link>
+
+                                        <button
+                                            onClick={() => handleDelete(product.id)}
+                                           className="p-2 bg-white border border-gray-200 text-red-500 rounded-lg hover:bg-red-50 hover:border-red-200 transition-all shadow-sm"
+                                        >
+                                            <FaTrash />
+                                        </button>
+
+                                    </div>
                                 </td>
                             </tr>
                         ))}
                     </tbody>
                 </table>
-                
-                {/* Pagination Link ở đây nếu cần */}
+                {/* Pagination Link*/}
+                <div className="mt-6">
+                    <Pagination links={products.links} />
+                </div>
+
             </div>
         </AdminLayout>
     );

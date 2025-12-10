@@ -12,6 +12,13 @@ class HinhAnhSanPham extends Model
     protected $table = 'HinhAnhSanPham';
     public $timestamps = false;
 
+    protected $fillable = [
+        'san_pham_id',
+        'url',
+        'alt_text',
+        'is_thumbnail'
+    ];
+    
     // Quan hệ: 1 hình ảnh thuộc 1 sản phẩm
     public function sanPham()
     {

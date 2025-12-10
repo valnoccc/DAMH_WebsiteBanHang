@@ -17,7 +17,7 @@ class ProductController extends Controller
         // 1. Khởi tạo query lấy Sản Phẩm kèm Hình Ảnh
         $query = SanPham::with('hinhAnh'); 
 
-        // 2. LỌC THEO DANH MỤC (Logic cũ + nâng cấp nhẹ)
+        // 2. LỌC THEO DANH MỤC
         $categoryName = 'Tất cả sản phẩm';
         if ($request->filled('danh_muc_id')) {
             $danhMucId = $request->danh_muc_id;

@@ -12,6 +12,15 @@ class BienTheSanPham extends Model
     protected $table = 'BienTheSanPham';
     public $timestamps = false;
 
+    protected $fillable = [
+        'san_pham_id',
+        'size',
+        'color',
+        'gia_ban',
+        'so_luong_ton',
+        'sku',
+        'hinh_anh_id'
+    ];
     // Quan hệ: 1 biến thể thuộc 1 sản phẩm
     public function sanPham()
     {

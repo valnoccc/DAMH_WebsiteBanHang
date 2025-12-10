@@ -11,11 +11,13 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\CategoryController;
 
 // Import các Controller Admin
 use App\Http\Controllers\AdminController;
 // THÊM DÒNG NÀY: Đổi tên để không bị trùng với ProductController của khách
-use App\Http\Controllers\Admin\ProductController as AdminProductController; 
+use App\Http\Controllers\Admin\ProductController as AdminProductController;
 
 // ==========================================
 // 1. PUBLIC ROUTES (Ai cũng xem được)
@@ -41,12 +43,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-    
+
     // Thanh toán
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
     Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
     Route::get('/checkout/success', [CheckoutController::class, 'success'])->name('checkout.success');
-    
+
     // Lịch sử đơn hàng
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
     Route::get('/orders/{id}', [OrderController::class, 'show'])->name('orders.show');
@@ -59,17 +61,42 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth', App\Http\Middleware\RoleMiddleware::class . ':admin'])
     ->prefix('admin') // Thêm tiền tố /admin cho URL đẹp hơn
     ->group(function () {
-        
+
         // Dashboard
         Route::get('/', [AdminController::class, 'dashboard'])->name('admin.dashboard');
 
         // --- QUẢN LÝ SẢN PHẨM ---
         Route::get('/products', [AdminProductController::class, 'index'])->name('admin.products.index'); // Xem danh sách
+
         Route::get('/products/create', [AdminProductController::class, 'create'])->name('admin.products.create'); // Form thêm mới
         Route::post('/products', [AdminProductController::class, 'store'])->name('admin.products.store'); // Lưu DB
+
         Route::delete('/products/{id}', [AdminProductController::class, 'destroy'])->name('admin.products.destroy'); // Xóa
-        
-        // (Sau này bạn thêm Quản lý Đơn hàng, Danh mục ở đây...)
+
+        Route::get('/products/{id}/edit', [AdminProductController::class, 'edit'])->name('admin.products.edit'); // Form sửa
+        Route::post('/products/{id}', [AdminProductController::class, 'update'])->name('admin.products.update'); // Lưu cập nhật
+
+        Route::delete('/product-images/{id}', [AdminProductController::class, 'deleteImage'])->name('admin.product-images.destroy');
+
+        // --- QUẢN LÝ ĐƠN HÀNG ---
+        Route::get('/orders', [App\Http\Controllers\Admin\OrderController::class, 'index'])->name('admin.orders.index');
+        Route::get('/orders/{id}', [App\Http\Controllers\Admin\OrderController::class, 'show'])->name('admin.orders.show');
+        Route::patch('/orders/{id}', [App\Http\Controllers\Admin\OrderController::class, 'update'])->name('admin.orders.update');
+
+        // --- QUẢN LÝ NGƯỜI DÙNG ---
+        Route::get('/users', [UserController::class, 'index'])->name('admin.users.index');
+        Route::patch('/users/{id}', [UserController::class, 'update'])->name('admin.users.update');
+        Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('admin.users.destroy');
+
+        // --- QUẢN LÝ DANH MỤC ---
+        Route::resource('categories', CategoryController::class)->names([
+            'index'   => 'admin.categories.index',
+            'create'  => 'admin.categories.create',
+            'store'   => 'admin.categories.store',
+            'edit'    => 'admin.categories.edit',
+            'update'  => 'admin.categories.update',
+            'destroy' => 'admin.categories.destroy',
+        ]);
     });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

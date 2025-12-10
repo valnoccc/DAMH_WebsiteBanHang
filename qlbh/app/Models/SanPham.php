@@ -12,6 +12,14 @@ class SanPham extends Model
     protected $table = 'SanPham';
     public $timestamps = false;
 
+    protected $fillable = [
+        'ten_san_pham',
+        'mo_ta',
+        'gia_goc',
+        'danh_muc_id',
+        'slug'
+    ];
+    
     // Quan hệ: 1 sản phẩm thuộc 1 danh mục
     public function danhMuc()
     {

@@ -21,7 +21,7 @@ export default function ProductDetail({ product }) {
     const currentStock = selectedVariant ? selectedVariant.so_luong_ton : null;
     // =============================================
 
-    const handleAddToCart = () => {
+    const handleAddToCart = (isBuyNow = false) => { // Thêm tham số mặc định là false
         if (!selectedSize) {
             alert('Vui lòng chọn size');
             return;
@@ -37,7 +37,7 @@ export default function ProductDetail({ product }) {
             return;
         }
 
-        // === LOGIC MỚI: Kiểm tra tồn kho trước khi gửi ===
+        // Kiểm tra tồn kho
         if (selectedVariant.so_luong_ton <= 0) {
             alert('Sản phẩm này đã hết hàng!');
             return;
@@ -47,18 +47,9 @@ export default function ProductDetail({ product }) {
              alert(`Chỉ còn ${selectedVariant.so_luong_ton} sản phẩm trong kho!`);
              return;
         }
-        // =============================================
 
-        // Lấy ảnh sản phẩm
         const productImage = product.hinh_anh?.[0]?.url || '/images/placeholder.png';
         
-        console.log('Thêm vào giỏ:', {
-            san_pham_id: product.id,
-            ten_san_pham: product.ten_san_pham,
-            hinh_anh_url: productImage,
-            product_images: product.hinh_anh
-        });
-
         // Gửi dữ liệu qua backend bằng Inertia
         router.post(route('cart.store'), {
             san_pham_id: product.id,
@@ -70,7 +61,7 @@ export default function ProductDetail({ product }) {
             hinh_anh_url: productImage,
         }, {
             onSuccess: () => {
-                // Update cart in session storage
+                // Update cart in session storage (logic cũ giữ nguyên)
                 const itemKey = `${product.id}_${selectedSize}_${selectedColor}`;
                 const cart = JSON.parse(sessionStorage.getItem('cart') || '{}');
                 cart[itemKey] = true;
@@ -79,10 +70,16 @@ export default function ProductDetail({ product }) {
                 // Dispatch custom event to update cart count
                 window.dispatchEvent(new Event('cartUpdated'));
                 
-                alert('Đã thêm vào giỏ hàng!');
-                setQuantity(1);
-                setSelectedSize(null);
-                setSelectedColor(null);
+                if (isBuyNow) {
+                    // Nếu là mua ngay -> Chuyển hướng sang trang thanh toán
+                    router.visit(route('checkout.index')); 
+                } else {
+                    // Nếu là thêm vào giỏ -> Hiện thông báo và reset
+                    alert('Đã thêm vào giỏ hàng!');
+                    setQuantity(1);
+                    setSelectedSize(null);
+                    setSelectedColor(null);
+                }
             },
             onError: () => {
                 alert('Có lỗi xảy ra, vui lòng thử lại!');
@@ -280,10 +277,12 @@ export default function ProductDetail({ product }) {
                             </div>
                         </div>
 
+                       {/* Nút thêm vào giỏ */}
                         <div className="flex gap-4 mb-8">
+                            {/* Nút Mua Ngay */}
                             <button
-                                // Nếu bạn muốn xử lý Mua Ngay sau này, thêm onClick ở đây
-                                onClick={handleAddToCart} 
+                                // Truyền true vào hàm để kích hoạt logic chuyển hướng
+                                onClick={() => handleAddToCart(true)} 
                                 disabled={currentStock === 0 || (!selectedSize || !selectedColor)}
                                 className={`px-6 py-4 bg-gradient-to-tr from-orange-400 to-yellow-400 text-black font-bold rounded-lg 
                                     hover:from-yellow-500 hover:to-yellow-500 transition-all w-full md:w-auto
@@ -293,9 +292,10 @@ export default function ProductDetail({ product }) {
                                 Mua ngay
                             </button>
 
-                            {/* 2. Nút Thêm vào giỏ: Đã sửa lại font-bold */}
+                            {/* Nút Thêm vào giỏ */}
                             <button
-                                onClick={handleAddToCart}
+                                // Truyền false (hoặc không truyền gì) để giữ nguyên logic cũ
+                                onClick={() => handleAddToCart(false)}
                                 disabled={currentStock === 0 || (!selectedSize || !selectedColor)}
                                 className={`px-6 py-4 font-bold rounded-lg transition-all w-full md:w-auto 
                                     ${currentStock === 0 
@@ -306,10 +306,10 @@ export default function ProductDetail({ product }) {
                                 {currentStock === 0 ? 'Tạm hết hàng' : 'Thêm vào giỏ hàng'}
                             </button>
                             
-                            {/* 3. Nút Yêu thích */}
-                            <button className="px-6 py-4 bg-gray-100 text-gray-700 font-bold rounded-lg hover:bg-gray-200 transition-all w-full md:w-auto">
+                            {/* Nút Yêu thích (Giữ nguyên) */}
+                            {/* <button className="px-6 py-4 bg-gray-100 text-gray-700 font-bold rounded-lg hover:bg-gray-200 transition-all w-full md:w-auto">
                                 Yêu thích
-                            </button>
+                            </button> */}
                         </div>
 
                         {/* Thông tin khác */}

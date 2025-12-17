@@ -12,6 +12,11 @@ class DanhMuc extends Model
     protected $table = 'danhmuc';
     public $timestamps = false;
 
+     protected $fillable = [
+        'ten_danh_muc',
+        'parent_id',
+    ];
+    
     // Quan hệ: 1 danh mục có nhiều sản phẩm
     public function sanPhams()
     {

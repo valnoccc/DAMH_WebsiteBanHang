@@ -1,8 +1,6 @@
-import DangerButton from '@/Components/DangerButton';
 import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
 import Modal from '@/Components/Modal';
-import SecondaryButton from '@/Components/SecondaryButton';
 import TextInput from '@/Components/TextInput';
 import { useForm } from '@inertiajs/react';
 import { useRef, useState } from 'react';
@@ -47,41 +45,34 @@ export default function DeleteUserForm({ className = '' }) {
 
     return (
         <section className={`space-y-6 ${className}`}>
-            <header>
-                <h2 className="text-lg font-medium text-gray-900">
-                    Delete Account
-                </h2>
-
-                <p className="mt-1 text-sm text-gray-600">
-                    Once your account is deleted, all of its resources and data
-                    will be permanently deleted. Before deleting your account,
-                    please download any data or information that you wish to
-                    retain.
+            <div>
+                <p className="text-sm text-gray-600 mb-6">
+                    Khi bạn xóa tài khoản, tất cả dữ liệu sẽ bị xóa vĩnh viễn. Hành động này không thể hoàn tác.
                 </p>
-            </header>
 
-            <DangerButton onClick={confirmUserDeletion}>
-                Delete Account
-            </DangerButton>
+                <button 
+                    type="button"
+                    onClick={confirmUserDeletion}
+                    className="px-6 py-3 bg-red-600 text-white font-black rounded-lg hover:bg-red-700 transition-all hover:scale-105"
+                >
+                    Xóa Tài Khoản
+                </button>
+            </div>
 
             <Modal show={confirmingUserDeletion} onClose={closeModal}>
-                <form onSubmit={deleteUser} className="p-6">
-                    <h2 className="text-lg font-medium text-gray-900">
-                        Are you sure you want to delete your account?
+                <form onSubmit={deleteUser} className="p-8">
+                    <h2 className="text-2xl font-black text-red-600 mb-4">
+                        Xác Nhận Xóa Tài Khoản
                     </h2>
 
-                    <p className="mt-1 text-sm text-gray-600">
-                        Once your account is deleted, all of its resources and
-                        data will be permanently deleted. Please enter your
-                        password to confirm you would like to permanently delete
-                        your account.
+                    <p className="text-gray-600 mb-6">
+                        Bạn chắc chắn muốn xóa tài khoản? Hành động này sẽ xóa vĩnh viễn tất cả dữ liệu của bạn. Vui lòng nhập mật khẩu để xác nhận.
                     </p>
 
-                    <div className="mt-6">
+                    <div className="mb-6">
                         <InputLabel
                             htmlFor="password"
-                            value="Password"
-                            className="sr-only"
+                            value="Mật Khẩu"
                         />
 
                         <TextInput
@@ -93,9 +84,9 @@ export default function DeleteUserForm({ className = '' }) {
                             onChange={(e) =>
                                 setData('password', e.target.value)
                             }
-                            className="mt-1 block w-3/4"
+                            className="mt-2 block w-full border-2 border-red-300 rounded-lg px-4 py-3 focus:border-red-500 focus:ring-2 focus:ring-red-200 transition-all"
                             isFocused
-                            placeholder="Password"
+                            placeholder="Nhập mật khẩu"
                         />
 
                         <InputError
@@ -104,14 +95,22 @@ export default function DeleteUserForm({ className = '' }) {
                         />
                     </div>
 
-                    <div className="mt-6 flex justify-end">
-                        <SecondaryButton onClick={closeModal}>
-                            Cancel
-                        </SecondaryButton>
+                    <div className="flex justify-end gap-4">
+                        <button
+                            type="button"
+                            onClick={closeModal}
+                            className="px-6 py-3 bg-gray-300 text-gray-800 font-bold rounded-lg hover:bg-gray-400 transition-all"
+                        >
+                            Hủy
+                        </button>
 
-                        <DangerButton className="ms-3" disabled={processing}>
-                            Delete Account
-                        </DangerButton>
+                        <button
+                            type="submit"
+                            disabled={processing}
+                            className="px-6 py-3 bg-red-600 text-white font-black rounded-lg hover:bg-red-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            {processing ? 'Đang Xóa...' : 'Xóa Tài Khoản'}
+                        </button>
                     </div>
                 </form>
             </Modal>

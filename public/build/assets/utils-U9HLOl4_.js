@@ -1,0 +1,1 @@
+const a=r=>new Intl.NumberFormat("vi-VN",{style:"currency",currency:"VND"}).format(r),o=r=>{var e;if(!r||r.length===0)return"https://via.placeholder.com/400";let t=(e=r.find(s=>s.is_thumbnail)||r[0])==null?void 0:e.url;return t?/^https?:\/\//i.test(t)||t.startsWith("/")?t:t.startsWith("storage/")?"/"+t:"/storage/"+t:"https://via.placeholder.com/400"};export{a as f,o as g};

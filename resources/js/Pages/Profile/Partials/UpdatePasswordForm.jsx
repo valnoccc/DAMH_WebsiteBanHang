@@ -1,6 +1,5 @@
 import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
-import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
 import { Transition } from '@headlessui/react';
 import { useForm } from '@inertiajs/react';
@@ -46,22 +45,11 @@ export default function UpdatePasswordForm({ className = '' }) {
 
     return (
         <section className={className}>
-            <header>
-                <h2 className="text-lg font-medium text-gray-900">
-                    Update Password
-                </h2>
-
-                <p className="mt-1 text-sm text-gray-600">
-                    Ensure your account is using a long, random password to stay
-                    secure.
-                </p>
-            </header>
-
-            <form onSubmit={updatePassword} className="mt-6 space-y-6">
+            <form onSubmit={updatePassword} className="space-y-6">
                 <div>
                     <InputLabel
                         htmlFor="current_password"
-                        value="Current Password"
+                        value="Mật Khẩu Hiện Tại"
                     />
 
                     <TextInput
@@ -72,7 +60,7 @@ export default function UpdatePasswordForm({ className = '' }) {
                             setData('current_password', e.target.value)
                         }
                         type="password"
-                        className="mt-1 block w-full"
+                        className="mt-2 block w-full border-2 border-primary-200 rounded-lg px-4 py-3 focus:border-accent-500 focus:ring-2 focus:ring-accent-200 transition-all"
                         autoComplete="current-password"
                     />
 
@@ -83,7 +71,7 @@ export default function UpdatePasswordForm({ className = '' }) {
                 </div>
 
                 <div>
-                    <InputLabel htmlFor="password" value="New Password" />
+                    <InputLabel htmlFor="password" value="Mật Khẩu Mới" />
 
                     <TextInput
                         id="password"
@@ -91,7 +79,7 @@ export default function UpdatePasswordForm({ className = '' }) {
                         value={data.password}
                         onChange={(e) => setData('password', e.target.value)}
                         type="password"
-                        className="mt-1 block w-full"
+                        className="mt-2 block w-full border-2 border-primary-200 rounded-lg px-4 py-3 focus:border-accent-500 focus:ring-2 focus:ring-accent-200 transition-all"
                         autoComplete="new-password"
                     />
 
@@ -101,7 +89,7 @@ export default function UpdatePasswordForm({ className = '' }) {
                 <div>
                     <InputLabel
                         htmlFor="password_confirmation"
-                        value="Confirm Password"
+                        value="Xác Nhận Mật Khẩu"
                     />
 
                     <TextInput
@@ -111,7 +99,7 @@ export default function UpdatePasswordForm({ className = '' }) {
                             setData('password_confirmation', e.target.value)
                         }
                         type="password"
-                        className="mt-1 block w-full"
+                        className="mt-2 block w-full border-2 border-primary-200 rounded-lg px-4 py-3 focus:border-accent-500 focus:ring-2 focus:ring-accent-200 transition-all"
                         autoComplete="new-password"
                     />
 
@@ -121,8 +109,14 @@ export default function UpdatePasswordForm({ className = '' }) {
                     />
                 </div>
 
-                <div className="flex items-center gap-4">
-                    <PrimaryButton disabled={processing}>Save</PrimaryButton>
+                <div className="flex items-center gap-4 pt-4">
+                    <button
+                        type="submit"
+                        disabled={processing}
+                        className="px-6 py-3 bg-gradient-to-r from-primary-600 to-accent-600 text-white font-black rounded-lg hover:shadow-lg transition-all hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        {processing ? 'Đang Lưu...' : 'Lưu Thay Đổi'}
+                    </button>
 
                     <Transition
                         show={recentlySuccessful}
@@ -131,8 +125,8 @@ export default function UpdatePasswordForm({ className = '' }) {
                         leave="transition ease-in-out"
                         leaveTo="opacity-0"
                     >
-                        <p className="text-sm text-gray-600">
-                            Saved.
+                        <p className="text-sm font-bold text-green-600">
+                            ✓ Lưu thành công
                         </p>
                     </Transition>
                 </div>

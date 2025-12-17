@@ -13,6 +13,18 @@ export const getProductImage = (hinhAnhArray) => {
     }
     const thumbnail = hinhAnhArray.find(img => img.is_thumbnail);
     // Nếu có URL thì trả về, không thì ảnh dự phòng
-    const url = (thumbnail || hinhAnhArray[0])?.url;
-    return url || 'https://via.placeholder.com/400';
+    let url = (thumbnail || hinhAnhArray[0])?.url;
+    if (!url) return 'https://via.placeholder.com/400';
+
+    // Nếu URL đã là đường dẫn tuyệt đối (http/https) hoặc bắt đầu bằng '/', sử dụng trực tiếp
+    if (/^https?:\/\//i.test(url) || url.startsWith('/')) {
+        return url;
+    }
+
+    // Nếu URL là đường dẫn relative (ví dụ: 'images/..' hoặc 'storage/...'), đặt tiền tố '/storage/' nếu cần
+    if (url.startsWith('storage/')) {
+        return '/' + url;
+    }
+
+    return '/storage/' + url;
 };

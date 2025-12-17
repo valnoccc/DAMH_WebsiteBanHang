@@ -4,6 +4,8 @@ namespace App\Http\Middleware;
 
 use Illuminate\Http\Request;
 use Inertia\Middleware;
+use Illuminate\Support\Facades\Auth;
+use App\Models\GioHang;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -33,6 +35,15 @@ class HandleInertiaRequests extends Middleware
             ...parent::share($request),
             'auth' => [
                 'user' => $request->user(),
+            ],
+            // === THÊM DÒNG NÀY: ĐẾM SỐ LƯỢNG GIỎ HÀNG TOÀN CỤC ===
+            'cartCount' => Auth::check() 
+                ? GioHang::where('user_id', Auth::id())->sum('so_luong') // Hoặc ->count() nếu đếm dòng
+                : 0,
+            // =====================================================
+            'flash' => [
+                'success' => fn () => $request->session()->get('success'),
+                'error' => fn () => $request->session()->get('error'),
             ],
         ];
     }

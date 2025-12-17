@@ -30,7 +30,7 @@ Dự án **Website Bán Hàng** là sản phẩm thuộc Đồ án môn học (D
 ## Công nghệ sử dụng (Tech Stack)
 - **Backend:** PHP, Laravel Framework.
 - **Database:** MySQL.
-- **Frontend:** HTML5, CSS3, JavaScript (hoặc Blade Template / React tùy code thực tế của bạn).
+- **Frontend:** Reactjs, Tailwincss.
 - **Payment Gateway:** MoMo API.
 
 ## Cài đặt & Chạy dự án (Installation)

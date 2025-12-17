@@ -28,9 +28,9 @@ class ProductController extends Controller
                 $query->whereIn('danh_muc_id', $childIds);
             }
         }
-        
+
         // (Chúng ta sẽ thêm logic cho 'sale' sau)
-        
+
         $products = $query->paginate(12);
 
         return Inertia::render('Product/Index', [

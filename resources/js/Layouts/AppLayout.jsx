@@ -1,77 +1,36 @@
-<<<<<<< HEAD
-import { Link } from '@inertiajs/react';
-import React from 'react';
-// Import icon
-import { FaSearch, FaUser, FaShoppingCart } from 'react-icons/fa';
-
-// Đây là Layout chung cho các trang
-export default function AppLayout({ children }) {
-=======
-import { Link, usePage } from '@inertiajs/react';
+import { Link, usePage, router } from '@inertiajs/react';
 import React, { useState } from 'react';
-import { router } from '@inertiajs/react';
-// Import icon
 import { FaSearch, FaUser, FaShoppingCart } from 'react-icons/fa';
-// Import Navigation Component
 import Navigation from '../Components/Navigation';
 
-// Đây là Layout chung cho các trang
+// Layout chung
 export default function AppLayout({ children }) {
-    // 1. Lấy thông tin User và Số lượng giỏ hàng từ Backend (Middleware)
     const { auth, cartCount } = usePage().props;
 
     const [profileOpen, setProfileOpen] = useState(false);
     const [searchInput, setSearchInput] = useState('');
 
-    // Hàm xử lý tìm kiếm
     const handleSearch = (e) => {
         e.preventDefault();
         if (searchInput.trim()) {
-            router.get('/san-pham', { search: searchInput }, {
-                preserveScroll: true,
-            });
+            router.get('/san-pham', { search: searchInput }, { preserveScroll: true });
         }
     };
 
->>>>>>> UserFeatures
     return (
         <div className="min-h-screen bg-white font-sans">
-            {/* ======== HEADER ======== */}
+            {/* ===== HEADER ===== */}
             <header className="sticky top-0 z-50 bg-white shadow-lg">
                 <div className="container mx-auto px-4 py-3 flex justify-between items-center">
-                    {/* 1. Logo */}
-<<<<<<< HEAD
-                    <Link href="/" className="text-3xl font-black bg-gradient-to-r from-violet-600 to-pink-600 bg-clip-text text-transparent hover:scale-110 transition-transform">
-                        ⚡ SHOP
-                    </Link>
-
-                    {/* 2. Thanh Tìm Kiếm (Giống Moji) */}
-                    <div className="relative w-1/2 hidden md:block">
-                        <input
-                            type="text"
-                            placeholder="🔍 Tìm kiếm sản phẩm..."
-                            className="w-full border-2 border-violet-300 rounded-full py-3 px-5 focus:outline-none focus:border-pink-500 focus:ring-3 focus:ring-pink-200 bg-gradient-to-r from-violet-50 to-pink-50 font-semibold"
-                        />
-                        <span className="absolute right-5 top-1/2 -translate-y-1/2 text-pink-500 text-xl">
-                            🔎
-                        </span>
-                    </div>
-
-                    {/* 3. Icons */}
-                    <div className="flex items-center space-x-6 text-2xl">
-                        <Link href="/login" className="text-violet-600 hover:text-pink-600 hover:scale-125 transition-all">
-                            👤
-                        </Link>
-                        <Link href="/cart" className="relative text-violet-600 hover:text-pink-600 hover:scale-125 transition-all">
-                            🛒
-                            {/* (Sau này thêm số lượng ở đây) */}
-                            {/* <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">3</span> */}
-=======
-                    <Link href="/" className="text-3xl font-black bg-gradient-to-r from-primary-600 to-accent-500 bg-clip-text text-transparent hover:scale-110 transition-transform">
+                    {/* Logo */}
+                    <Link
+                        href="/"
+                        className="text-3xl font-black bg-gradient-to-r from-primary-600 to-accent-500 bg-clip-text text-transparent hover:scale-110 transition-transform"
+                    >
                         MinhBell Fashion
                     </Link>
 
-                    {/* 2. Thanh Tìm Kiếm */}
+                    {/* Search */}
                     <form onSubmit={handleSearch} className="relative w-1/2 hidden md:block">
                         <div className="flex items-center gap-2">
                             <input
@@ -79,57 +38,46 @@ export default function AppLayout({ children }) {
                                 placeholder="Tìm kiếm sản phẩm..."
                                 value={searchInput}
                                 onChange={(e) => setSearchInput(e.target.value)}
-                                className="w-full border-2 border-primary-200 rounded-full py-3 px-5 focus:outline-none focus:border-accent-500 focus:ring-3 focus:ring-accent-200 bg-gradient-to-r from-primary-50 to-accent-50 font-semibold"
+                                className="w-full border-2 border-primary-200 rounded-full py-3 px-5 focus:outline-none focus:border-accent-500 bg-gradient-to-r from-primary-50 to-accent-50 font-semibold"
                             />
-                            <button
-                                type="submit"
-                                className=" text-gray-500 px-4 py-3 rounded-full transition-all"
-                            >
-                                <FaSearch size={24} />
+                            <button type="submit" className="text-gray-500 px-4 py-3">
+                                <FaSearch size={22} />
                             </button>
                         </div>
                     </form>
 
-                    {/* 3. Biểu tượng người dùng và giỏ hàng */}
+                    {/* User + Cart */}
                     <div className="flex items-center space-x-6">
-                        {auth.user ? (
-                            // Nếu đã đăng nhập: Hiển thị dropdown menu
+                        {auth?.user ? (
                             <div className="relative">
                                 <button
-                                    id="profile-btn"
                                     onClick={() => setProfileOpen(!profileOpen)}
-                                    className="flex items-center justify-center w-8 h-8 hover:scale-125 transition-all text-gray-400"
+                                    className="text-gray-400 hover:scale-125 transition-all"
                                 >
-                                    <FaUser size={24} />
+                                    <FaUser size={22} />
                                 </button>
 
-                                {/* Dropdown Menu */}
                                 {profileOpen && (
-                                    <div id="profile-dropdown" className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border-2 border-primary-200 py-2 z-50" onClick={(e) => e.stopPropagation()}>
-                                        <div className="px-4 py-3 border-b border-gray-200">
-                                            <p className="text-gray-800 font-semibold text-sm">{auth.user.name}</p>
-                                            <p className="text-gray-500 text-xs">{auth.user.email}</p>
+                                    <div
+                                        className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border py-2 z-50"
+                                        onClick={(e) => e.stopPropagation()}
+                                    >
+                                        <div className="px-4 py-3 border-b">
+                                            <p className="font-semibold text-sm">{auth.user.name}</p>
+                                            <p className="text-xs text-gray-500">{auth.user.email}</p>
                                         </div>
 
-                                        <Link
-                                            href="/profile"
-                                            className="block px-4 py-3 text-gray-700 hover:bg-primary-50 hover:text-primary-600 font-semibold transition-all"
-                                        >
-                                            Hồ sơ cá nhân
+                                        <Link href="/profile" className="block px-4 py-3 hover:bg-gray-100">
+                                            Hồ sơ
                                         </Link>
 
-                                        <Link
-                                            href="/orders" // Bạn cần tạo trang này sau
-                                            className="block px-4 py-3 text-gray-700 hover:bg-primary-50 hover:text-primary-600 font-semibold transition-all"
-                                        >
-                                            Đơn hàng của tôi
+                                        <Link href="/orders" className="block px-4 py-3 hover:bg-gray-100">
+                                            Đơn hàng
                                         </Link>
 
                                         <button
-                                            onClick={() => {
-                                                router.post('/logout');
-                                            }}
-                                            className="w-full text-left px-4 py-3 text-red-600 hover:bg-red-50 font-semibold transition-all border-t border-gray-200"
+                                            onClick={() => router.post('/logout')}
+                                            className="w-full text-left px-4 py-3 text-red-600 hover:bg-red-50 border-t"
                                         >
                                             Đăng xuất
                                         </button>
@@ -137,145 +85,72 @@ export default function AppLayout({ children }) {
                                 )}
                             </div>
                         ) : (
-                            // Nếu chưa đăng nhập: Hiển thị 2 nút đăng nhập và đăng ký
-                            <div className="flex items-center space-x-3">
-                                <Link
-                                    href="/login"
-                                    className="px-4 py-2 bg-gray-100 text-black font-semibold rounded-lg hover:bg-green-400 transition-all hover:scale-105"
-                                >
-                                    Đăng Nhập
+                            <div className="flex space-x-3">
+                                <Link href="/login" className="px-4 py-2 bg-gray-100 rounded-lg">
+                                    Đăng nhập
                                 </Link>
-                                <Link
-                                    href="/register"
-                                    className="px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-all hover:scale-105"
-                                >
-                                    Đăng Ký
+                                <Link href="/register" className="px-4 py-2 bg-blue-600 text-white rounded-lg">
+                                    Đăng ký
                                 </Link>
                             </div>
                         )}
 
-                        {/* Icon Giỏ Hàng */}
-                        <Link
-                            href="/cart"
-                            className="relative flex items-center justify-center w-8 h-8 hover:scale-125 transition-all text-gray-400"
-                        >
-                            <FaShoppingCart size={24} />
-
-                            {/* Badge số lượng (Lấy từ Database qua Props) */}
+                        <Link href="/cart" className="relative text-gray-400 hover:scale-125 transition-all">
+                            <FaShoppingCart size={22} />
                             {cartCount > 0 && (
-                                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
                                     {cartCount > 99 ? '99+' : cartCount}
                                 </span>
                             )}
->>>>>>> UserFeatures
                         </Link>
                     </div>
                 </div>
 
-<<<<<<< HEAD
-                {/* ======== MEGATRON MENU ======== */}
-                <nav className="bg-gray-800 text-white">
-                    <div className="container mx-auto px-4 flex justify-center space-x-10 py-3">
-                        <Link href="/" className="font-semibold hover:text-gray-300">TRANG CHỦ</Link>
-                        <Link href="/san-pham" className="font-semibold hover:text-gray-300">TẤT CẢ SẢN PHẨM</Link>
-
-                        {/* Đây là các link quan trọng, trỏ đến ID danh mục cha */}
-                        <Link href="/san-pham?danh_muc_id=1" className="font-semibold hover:text-gray-300">👕 THỜI TRANG NAM</Link>
-                        <Link href="/san-pham?danh_muc_id=2" className="font-semibold hover:text-gray-300">👗 THỜI TRANG NỮ</Link>
-
-                        {/* (Bạn có thể thêm link cho Giày, Khăn sau) */}
-
-                        <Link href="/san-pham?sale=true" className="font-semibold text-red-400 hover:text-red-300">🔥 SALE</Link>
-                    </div>
-                </nav>
-            </header>
-
-            {/* ======== NỘI DUNG TRANG SẼ ĐƯỢC CHÈN VÀO ĐÂY ======== */}
-=======
                 <Navigation />
             </header>
 
-            {/* ======== NỘI DUNG TRANG ======== */}
->>>>>>> UserFeatures
-            <main>
-                {children}
-            </main>
+            {/* ===== CONTENT ===== */}
+            <main>{children}</main>
 
-            {/* ======== FOOTER ======== */}
-            <footer className="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 text-white py-16 mt-20">
-                <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
-<<<<<<< HEAD
-                    {/* Col 1 */}
+            {/* ===== FOOTER ===== */}
+            <footer className="bg-gray-900 text-white py-16 mt-20">
+                <div className="container mx-auto grid md:grid-cols-4 gap-8 px-4">
                     <div>
-                        <h4 className="text-3xl font-black mb-4 bg-gradient-to-r from-violet-400 to-pink-400 bg-clip-text text-transparent">⚡ SHOP</h4>
-                        <p className="text-gray-300 leading-relaxed">Phong cách trẻ trung, hiện đại. Cập nhật xu hướng mới nhất mỗi ngày.</p>
-                    </div>
-                    {/* Col 2 */}
-                    <div>
-                        <h4 className="text-lg font-black text-white mb-4">📋 CHÍNH SÁCH</h4>
-                        <ul className="space-y-3">
-                            <li><a href="#" className="text-gray-300 hover:text-white hover:translate-x-1 transition-all">✓ Chính sách đổi trả</a></li>
-                            <li><a href="#" className="text-gray-300 hover:text-white hover:translate-x-1 transition-all">✓ Chính sách vận chuyển</a></li>
-                            <li><a href="#" className="text-gray-300 hover:text-white hover:translate-x-1 transition-all">✓ Chính sách bảo mật</a></li>
-=======
-                    {/* Col 1 (Logo hoặc giới thiệu ngắn - đang để trống theo code cũ) */}
-                    <div className='mx-auto'>
-                        <h4 className="text-lg font-black text-white mb-4">VỀ CHÚNG TÔI</h4>
-                        <p className="text-gray-300">Thương hiệu thời trang uy tín hàng đầu.</p>
+                        <h4 className="font-bold mb-4">VỀ CHÚNG TÔI</h4>
+                        <p className="text-gray-400">Thương hiệu thời trang uy tín.</p>
                     </div>
 
-                    {/* Col 2 */}
-                    <div className='mx-auto'>
-                        <h4 className="text-lg font-black text-white mb-4">CHÍNH SÁCH</h4>
-                        <ul className="space-y-3">
-                            <li><a href="#" className="text-gray-300 hover:text-white hover:translate-x-1 transition-all">Chính sách đổi trả</a></li>
-                            <li><a href="#" className="text-gray-300 hover:text-white hover:translate-x-1 transition-all">Chính sách vận chuyển</a></li>
-                            <li><a href="#" className="text-gray-300 hover:text-white hover:translate-x-1 transition-all">Chính sách bảo mật</a></li>
->>>>>>> UserFeatures
+                    <div>
+                        <h4 className="font-bold mb-4">CHÍNH SÁCH</h4>
+                        <ul className="space-y-2 text-gray-400">
+                            <li>Chính sách đổi trả</li>
+                            <li>Chính sách vận chuyển</li>
+                            <li>Chính sách bảo mật</li>
                         </ul>
                     </div>
-                    {/* Col 3 */}
+
                     <div>
-<<<<<<< HEAD
-                        <h4 className="text-lg font-black text-white mb-4">👥 THEO DÕI CHÚNG TÔI</h4>
-                        <ul className="space-y-3">
-                            <li><a href="#" className="text-gray-300 hover:text-blue-400 hover:translate-x-1 transition-all">📘 Facebook</a></li>
-                            <li><a href="#" className="text-gray-300 hover:text-pink-400 hover:translate-x-1 transition-all">📷 Instagram</a></li>
-                            <li><a href="#" className="text-gray-300 hover:text-black hover:translate-x-1 transition-all">🎵 Tiktok</a></li>
-=======
-                        <h4 className="text-lg font-black text-white mb-4"> THEO DÕI CHÚNG TÔI</h4>
-                        <ul className="space-y-3">
-                            <li><a href="#" className="text-gray-300 hover:text-blue-400 hover:translate-x-1 transition-all">Facebook</a></li>
-                            <li><a href="#" className="text-gray-300 hover:text-accent-400 hover:translate-x-1 transition-all">Instagram</a></li>
-                            <li><a href="#" className="text-gray-300 hover:text-black hover:translate-x-1 transition-all">Tiktok</a></li>
->>>>>>> UserFeatures
+                        <h4 className="font-bold mb-4">THEO DÕI</h4>
+                        <ul className="space-y-2 text-gray-400">
+                            <li>Facebook</li>
+                            <li>Instagram</li>
+                            <li>Tiktok</li>
                         </ul>
                     </div>
-                    {/* Col 4 */}
+
                     <div>
-<<<<<<< HEAD
-                        <h4 className="text-lg font-black text-white mb-4">💌 NHẬN TIN KHUYẾN MÃI</h4>
-=======
-                        <h4 className="text-lg font-black text-white mb-4">NHẬN TIN KHUYẾN MÃI</h4>
->>>>>>> UserFeatures
-                        <p className="text-gray-300 mb-3">Nhận mã giảm giá và thông tin sale mới nhất!</p>
+                        <h4 className="font-bold mb-4">NHẬN KHUYẾN MÃI</h4>
                         <input
                             type="email"
-                            placeholder="Email của bạn..."
-<<<<<<< HEAD
-                            className="w-full bg-gray-700 border-2 border-violet-500 rounded-lg py-3 px-4 text-white focus:outline-none focus:border-pink-500 focus:ring-2 focus:ring-pink-300 font-semibold"
+                            placeholder="Email của bạn"
+                            className="w-full bg-gray-700 border rounded-lg px-4 py-2"
                         />
                     </div>
                 </div>
-                <div className="text-center text-gray-400 border-t border-gray-700 pt-8 mt-8 font-semibold">
-                    &copy; 2025 Shop Quần Áo - Nơi bạn tìm thấy phong cách của riêng mình ✨
+
+                <div className="text-center text-gray-500 mt-10 border-t border-gray-700 pt-6">
+                    © 2025 MinhBell Fashion
                 </div>
-=======
-                            className="w-full bg-gray-700 border-2 border-primary-500 rounded-lg py-3 px-4 text-white focus:outline-none focus:border-accent-500 focus:ring-2 focus:ring-accent-300 font-semibold"
-                        />
-                    </div>
-                </div>
->>>>>>> UserFeatures
             </footer>
         </div>
     );

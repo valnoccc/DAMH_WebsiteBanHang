@@ -1,17 +1,7 @@
-<<<<<<< HEAD
-import React from 'react';
-import { Head } from '@inertiajs/react';
-import AppLayout from '@/Layouts/AppLayout';
-import ProductCard from '@/Components/ProductCard'; // <-- Dùng thẻ sản phẩm mới
-// (Bạn có thể thêm Pagination sau)
-
-export default function Index({ products, categoryName }) {
-    
-=======
 import React, { useState } from 'react';
 import { Head } from '@inertiajs/react';
 // 1. QUAN TRỌNG: Import router để gửi dữ liệu lên server
-import { router } from '@inertiajs/react'; 
+import { router } from '@inertiajs/react';
 import AppLayout from '@/Layouts/AppLayout';
 import ProductCard from '@/Components/ProductCard';
 import Pagination from '@/Components/Pagination';
@@ -24,7 +14,7 @@ export default function Index({ products, categoryName, categories }) {
     const [selectedCategory, setSelectedCategory] = useState(queryParams.get('danh_muc_id') || '');
     const [selectedColor, setSelectedColor] = useState(queryParams.get('color') || '');
     const [selectedSize, setSelectedSize] = useState(queryParams.get('size') || '');
-    
+
     // 2. QUAN TRỌNG: Thêm state cho giá tiền
     const [minPrice, setMinPrice] = useState(queryParams.get('min_price') || '');
     const [maxPrice, setMaxPrice] = useState(queryParams.get('max_price') || '');
@@ -46,41 +36,16 @@ export default function Index({ products, categoryName, categories }) {
 
         // Gửi yêu cầu lên server
         router.get('/san-pham', params, {
-            preserveState: true, 
+            preserveState: true,
             preserveScroll: true,
-            replace: true, 
+            replace: true,
         });
     };
 
->>>>>>> UserFeatures
     return (
         <AppLayout>
             <Head title={categoryName} />
 
-<<<<<<< HEAD
-            <div className="container mx-auto px-4 py-20 bg-gradient-to-b from-white to-orange-50">
-                
-                {/* Tiêu đề trang (khớp với phong cách trang chủ) */}
-                <h1 className="text-4xl font-black text-center mb-4 text-transparent bg-clip-text bg-gradient-to-r from-violet-600 to-pink-600">
-                    {categoryName}
-                </h1>
-
-                {/* Lưới sản phẩm */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-10 mt-12">
-                    
-                    {/* Dùng 'products.data' vì đây là đối tượng đã phân trang */}
-                    {products.data.map((product) => (
-                        <ProductCard key={product.id} product={product} />
-                    ))}
-
-                </div>
-
-                {/* (Nơi hiển thị link phân trang sau này) */}
-                {/* <Pagination links={products.links} className="mt-12" /> */}
-                
-            </div>
-            
-=======
             <div className="container mx-auto px-4 py-20 bg-gradient-to-b from-white to-orange-50 min-h-screen">
 
                 {/* Tiêu đề trang */}
@@ -101,16 +66,16 @@ export default function Index({ products, categoryName, categories }) {
                                 <label className="block mb-3 font-bold text-gray-800">Khoảng Giá</label>
                                 <div className="flex gap-3 mb-3">
                                     {/* 4. SỬA INPUT GIÁ: Thêm value và onChange */}
-                                    <input 
-                                        type="number" 
-                                        placeholder="Từ" 
+                                    <input
+                                        type="number"
+                                        placeholder="Từ"
                                         value={minPrice}
                                         onChange={(e) => setMinPrice(e.target.value)}
                                         className="w-1/2 border-2 border-gray-200 rounded-lg px-3 py-2 focus:border-violet-500 focus:ring-2 transition-all"
                                     />
-                                    <input 
-                                        type="number" 
-                                        placeholder="Đến" 
+                                    <input
+                                        type="number"
+                                        placeholder="Đến"
                                         value={maxPrice}
                                         onChange={(e) => setMaxPrice(e.target.value)}
                                         className="w-1/2 border-2 border-gray-200 rounded-lg px-3 py-2 focus:border-violet-500 focus:ring-2 transition-all"
@@ -124,9 +89,8 @@ export default function Index({ products, categoryName, categories }) {
                                 <div className="space-y-2 max-h-60 overflow-y-auto">
                                     <button
                                         onClick={() => setSelectedCategory('')}
-                                        className={`w-full px-3 py-2 rounded-lg font-semibold transition-all text-left ${
-                                            selectedCategory === '' ? 'bg-blue-600 text-white shadow-lg' : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
-                                        }`}
+                                        className={`w-full px-3 py-2 rounded-lg font-semibold transition-all text-left ${selectedCategory === '' ? 'bg-blue-600 text-white shadow-lg' : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
+                                            }`}
                                     >
                                         Tất cả
                                     </button>
@@ -137,7 +101,7 @@ export default function Index({ products, categoryName, categories }) {
                                             className={`w-full px-3 py-2 rounded-lg font-semibold transition-all text-left ${
                                                 // So sánh == vì id có thể là số hoặc chuỗi
                                                 selectedCategory == category.id ? 'bg-blue-600 text-white shadow-lg' : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
-                                            }`}
+                                                }`}
                                         >
                                             {category.ten_danh_muc}
                                         </button>
@@ -154,11 +118,10 @@ export default function Index({ products, categoryName, categories }) {
                                             key={color}
                                             // Logic: Nếu đang chọn màu này thì bỏ chọn (về rỗng), ngược lại thì chọn
                                             onClick={() => setSelectedColor(selectedColor === color ? '' : color)}
-                                            className={`px-3 py-2 rounded-lg font-semibold transition-all border ${
-                                                selectedColor === color
+                                            className={`px-3 py-2 rounded-lg font-semibold transition-all border ${selectedColor === color
                                                     ? 'bg-blue-600 text-white shadow-md'
                                                     : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
-                                            }`}
+                                                }`}
                                         >
                                             {color}
                                         </button>
@@ -174,11 +137,10 @@ export default function Index({ products, categoryName, categories }) {
                                         <button
                                             key={size}
                                             onClick={() => setSelectedSize(selectedSize === size ? '' : size)}
-                                            className={`px-2 py-2 rounded-lg font-bold text-sm transition-all border ${
-                                                selectedSize === size
+                                            className={`px-2 py-2 rounded-lg font-bold text-sm transition-all border ${selectedSize === size
                                                     ? 'bg-blue-600 text-white shadow-md'
                                                     : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
-                                            }`}
+                                                }`}
                                         >
                                             {size}
                                         </button>
@@ -187,7 +149,7 @@ export default function Index({ products, categoryName, categories }) {
                             </div>
 
                             {/* Nút áp dụng */}
-                            <button 
+                            <button
                                 onClick={handleFilter}
                                 className="w-full bg-blue-600 text-white py-3 rounded-xl font-black shadow-lg hover:shadow-xl transition-all hover:scale-105 active:scale-95"
                             >
@@ -208,8 +170,8 @@ export default function Index({ products, categoryName, categories }) {
                             // Hiển thị khi không có sản phẩm nào
                             <div className="text-center py-20 bg-white rounded-2xl shadow-sm">
                                 <p className="text-xl text-gray-500 font-semibold">Không tìm thấy sản phẩm phù hợp.</p>
-                                <button 
-                                    onClick={() => router.get('/san-pham')} 
+                                <button
+                                    onClick={() => router.get('/san-pham')}
                                     className="mt-4 text-violet-600 font-bold hover:underline"
                                 >
                                     Xóa bộ lọc
@@ -222,7 +184,6 @@ export default function Index({ products, categoryName, categories }) {
                     </div>
                 </div>
             </div>
->>>>>>> UserFeatures
         </AppLayout>
     );
 }

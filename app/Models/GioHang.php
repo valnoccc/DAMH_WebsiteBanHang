@@ -9,10 +9,6 @@ class GioHang extends Model
 {
     use HasFactory;
 
-<<<<<<< HEAD
-    protected $table = 'giohang';
-    public $timestamps = false; // Bảng này chỉ có created_at
-=======
     protected $table = 'GioHang';
     public $timestamps = false;
 
@@ -23,7 +19,6 @@ class GioHang extends Model
         'so_luong',
     ];
     // ---------------------
->>>>>>> UserFeatures
 
     public function user()
     {

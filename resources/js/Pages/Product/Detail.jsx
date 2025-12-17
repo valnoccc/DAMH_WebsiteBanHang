@@ -42,14 +42,14 @@ export default function ProductDetail({ product }) {
             alert('Sản phẩm này đã hết hàng!');
             return;
         }
-        
+
         if (quantity > selectedVariant.so_luong_ton) {
-             alert(`Chỉ còn ${selectedVariant.so_luong_ton} sản phẩm trong kho!`);
-             return;
+            alert(`Chỉ còn ${selectedVariant.so_luong_ton} sản phẩm trong kho!`);
+            return;
         }
 
         const productImage = product.hinh_anh?.[0]?.url || '/images/placeholder.png';
-        
+
         // Gửi dữ liệu qua backend bằng Inertia
         router.post(route('cart.store'), {
             san_pham_id: product.id,
@@ -66,13 +66,13 @@ export default function ProductDetail({ product }) {
                 const cart = JSON.parse(sessionStorage.getItem('cart') || '{}');
                 cart[itemKey] = true;
                 sessionStorage.setItem('cart', JSON.stringify(cart));
-                
+
                 // Dispatch custom event to update cart count
                 window.dispatchEvent(new Event('cartUpdated'));
-                
+
                 if (isBuyNow) {
                     // Nếu là mua ngay -> Chuyển hướng sang trang thanh toán
-                    router.visit(route('checkout.index')); 
+                    router.visit(route('checkout.index'));
                 } else {
                     // Nếu là thêm vào giỏ -> Hiện thông báo và reset
                     alert('Đã thêm vào giỏ hàng!');
@@ -112,8 +112,8 @@ export default function ProductDetail({ product }) {
                                         key={idx}
                                         onClick={() => setMainImage(img.url)}
                                         className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-all ${mainImage === img.url
-                                                ? 'border-primary-600'
-                                                : 'border-gray-200 hover:border-primary-300'
+                                            ? 'border-primary-600'
+                                            : 'border-gray-200 hover:border-primary-300'
                                             }`}
                                     >
                                         <img
@@ -186,8 +186,8 @@ export default function ProductDetail({ product }) {
                                             key={size}
                                             onClick={() => setSelectedSize(size)}
                                             className={`px-5 py-3 font-semibold rounded-lg border-2 transition-all ${selectedSize === size
-                                                    ? 'border-primary-600 bg-primary-100 text-primary-700'
-                                                    : 'border-gray-300 bg-white text-gray-700 hover:border-primary-300'
+                                                ? 'border-primary-600 bg-primary-100 text-primary-700'
+                                                : 'border-gray-300 bg-white text-gray-700 hover:border-primary-300'
                                                 }`}
                                         >
                                             {size}
@@ -209,8 +209,8 @@ export default function ProductDetail({ product }) {
                                             key={color}
                                             onClick={() => setSelectedColor(color)}
                                             className={`px-5 py-3 font-semibold rounded-lg border-2 transition-all ${selectedColor === color
-                                                    ? 'border-primary-600 bg-primary-100 text-primary-700'
-                                                    : 'border-gray-300 bg-white text-gray-700 hover:border-primary-300'
+                                                ? 'border-primary-600 bg-primary-100 text-primary-700'
+                                                : 'border-gray-300 bg-white text-gray-700 hover:border-primary-300'
                                                 }`}
                                         >
                                             {color}
@@ -222,7 +222,7 @@ export default function ProductDetail({ product }) {
 
                         {/* Hiển thị tồn kho */}
                         <div className="mb-3 h-6">
-                             {selectedSize && selectedColor ? (
+                            {selectedSize && selectedColor ? (
                                 currentStock > 0 ? (
                                     <span className="font-bold text-sm">
                                         Còn {currentStock} sản phẩm
@@ -245,7 +245,7 @@ export default function ProductDetail({ product }) {
                             <div className="flex items-center gap-3">
                                 <button
                                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                                    disabled={currentStock === 0} 
+                                    disabled={currentStock === 0}
                                     className="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors font-bold text-lg disabled:opacity-50"
                                 >
                                     −
@@ -277,12 +277,12 @@ export default function ProductDetail({ product }) {
                             </div>
                         </div>
 
-                       {/* Nút thêm vào giỏ */}
+                        {/* Nút thêm vào giỏ */}
                         <div className="flex gap-4 mb-8">
                             {/* Nút Mua Ngay */}
                             <button
                                 // Truyền true vào hàm để kích hoạt logic chuyển hướng
-                                onClick={() => handleAddToCart(true)} 
+                                onClick={() => handleAddToCart(true)}
                                 disabled={currentStock === 0 || (!selectedSize || !selectedColor)}
                                 className={`px-6 py-4 bg-gradient-to-tr from-orange-400 to-yellow-400 text-black font-bold rounded-lg 
                                     hover:from-yellow-500 hover:to-yellow-500 transition-all w-full md:w-auto
@@ -298,14 +298,14 @@ export default function ProductDetail({ product }) {
                                 onClick={() => handleAddToCart(false)}
                                 disabled={currentStock === 0 || (!selectedSize || !selectedColor)}
                                 className={`px-6 py-4 font-bold rounded-lg transition-all w-full md:w-auto 
-                                    ${currentStock === 0 
-                                        ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
+                                    ${currentStock === 0
+                                        ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                                         : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                                     }`}
                             >
                                 {currentStock === 0 ? 'Tạm hết hàng' : 'Thêm vào giỏ hàng'}
                             </button>
-                            
+
                             {/* Nút Yêu thích (Giữ nguyên) */}
                             {/* <button className="px-6 py-4 bg-gray-100 text-gray-700 font-bold rounded-lg hover:bg-gray-200 transition-all w-full md:w-auto">
                                 Yêu thích

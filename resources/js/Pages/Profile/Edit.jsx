@@ -1,42 +1,3 @@
-<<<<<<< HEAD
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head } from '@inertiajs/react';
-import DeleteUserForm from './Partials/DeleteUserForm';
-import UpdatePasswordForm from './Partials/UpdatePasswordForm';
-import UpdateProfileInformationForm from './Partials/UpdateProfileInformationForm';
-
-export default function Edit({ mustVerifyEmail, status }) {
-    return (
-        <AuthenticatedLayout
-            header={
-                <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                    Profile
-                </h2>
-            }
-        >
-            <Head title="Profile" />
-
-            <div className="py-12">
-                <div className="mx-auto max-w-7xl space-y-6 sm:px-6 lg:px-8">
-                    <div className="bg-white p-4 shadow sm:rounded-lg sm:p-8">
-                        <UpdateProfileInformationForm
-                            mustVerifyEmail={mustVerifyEmail}
-                            status={status}
-                            className="max-w-xl"
-                        />
-                    </div>
-
-                    <div className="bg-white p-4 shadow sm:rounded-lg sm:p-8">
-                        <UpdatePasswordForm className="max-w-xl" />
-                    </div>
-
-                    <div className="bg-white p-4 shadow sm:rounded-lg sm:p-8">
-                        <DeleteUserForm className="max-w-xl" />
-                    </div>
-                </div>
-            </div>
-        </AuthenticatedLayout>
-=======
 import AppLayout from '@/Layouts/AppLayout';
 import { Head, useForm } from '@inertiajs/react';
 import React from 'react';
@@ -51,7 +12,7 @@ export default function Edit({ mustVerifyEmail, status }) {
             <Head title="Hồ Sơ Cá Nhân" />
 
             {/* ======== HERO SECTION ======== */}
-           
+
 
             {/* ======== PROFILE CONTENT ======== */}
             <section className="container mx-auto px-4 py-16">
@@ -61,7 +22,7 @@ export default function Edit({ mustVerifyEmail, status }) {
                         <div className="bg-white rounded-2xl shadow-lg p-8 sticky top-24">
                             <div className="text-center">
                                 <div className="w-24 h-24 mx-auto mb-4 rounded-full bg-blue-500 flex items-center justify-center text-white text-5xl">
-                                    <TiUser size={64}/>
+                                    <TiUser size={64} />
                                 </div>
                                 <h3 className="text-xl font-black text-gray-800 mb-2">
                                     Tài Khoản Của Bạn
@@ -126,6 +87,5 @@ export default function Edit({ mustVerifyEmail, status }) {
                 </div>
             </section>
         </AppLayout>
->>>>>>> UserFeatures
     );
 }

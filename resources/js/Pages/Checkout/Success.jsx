@@ -23,7 +23,7 @@ export default function Success() {
                             Tiếp tục mua sắm
                         </Link>
                         <Link
-                            href="/dashboard"
+                            href="/orders"
                             className="block w-full bg-gray-100 text-gray-800 py-3 rounded-lg font-bold hover:bg-gray-200"
                         >
                             Xem đơn hàng của bạn

@@ -3,7 +3,7 @@ import { Head, Link } from '@inertiajs/react';
 import AppLayout from '@/Layouts/AppLayout';
 
 export default function OrderIndex({ orders }) {
-    
+
     // Hàm format tiền tệ
     const formatCurrency = (amount) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
 
@@ -43,7 +43,7 @@ export default function OrderIndex({ orders }) {
                         <div className="space-y-6">
                             {orders.map((order) => (
                                 <div key={order.id} className="bg-white gap-5 rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow">
-                                    
+
                                     {/* Header của Card Đơn Hàng */}
                                     <div className="bg-gray-50 px-6 py-4 border-b border-gray-200 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                                         <div>
@@ -69,13 +69,13 @@ export default function OrderIndex({ orders }) {
                                             <div key={item.id} className="flex items-center gap-4 mb-4 last:mb-0">
                                                 {/* Ảnh sản phẩm */}
                                                 <div className="w-16 h-16 bg-gray-100 rounded-md overflow-hidden flex-shrink-0 border border-gray-200">
-                                                    <img 
-                                                        src={item.bien_the?.hinh_anh?.url || '/images/placeholder.png'} 
+                                                    <img
+                                                        src={item.bien_the?.hinh_anh?.url || '/images/placeholder.png'}
                                                         alt={item.bien_the?.san_pham?.ten_san_pham}
                                                         className="w-full h-full object-cover"
                                                     />
                                                 </div>
-                                                
+
                                                 {/* Thông tin sản phẩm */}
                                                 <div className="flex-1">
                                                     <h4 className="font-bold text-gray-800 text-sm md:text-base">
@@ -100,7 +100,7 @@ export default function OrderIndex({ orders }) {
                                         <span className="text-sm text-gray-500">
                                             Phương thức thanh toán: <strong className="text-gray-700 uppercase">{order.phuong_thuc_thanh_toan}</strong>
                                         </span>
-                                        
+
                                         {/* Bạn có thể thêm nút Xem chi tiết nếu muốn làm trang Order/Show */}
                                         {/* <Link href={`/orders/${order.id}`} className="text-blue-600 font-bold text-sm hover:underline">
                                             Xem chi tiết
@@ -115,8 +115,8 @@ export default function OrderIndex({ orders }) {
                             <div className="text-6xl mb-4"></div>
                             <h2 className="text-2xl font-bold text-gray-900 mb-2">Bạn chưa có đơn hàng nào</h2>
                             <p className="text-gray-500 mb-8">Hãy khám phá các sản phẩm thời trang mới nhất nhé!</p>
-                            <Link 
-                                href="/san-pham" 
+                            <Link
+                                href="/san-pham"
                                 className="inline-block px-8 py-3 bg-primary-600 text-white font-bold rounded-full hover:bg-primary-700 transition-all shadow-lg"
                             >
                                 Mua sắm ngay

@@ -12,8 +12,17 @@ export default function AppLayout({ children }) {
     const { auth, cartCount } = usePage().props;
 
     const [profileOpen, setProfileOpen] = useState(false);
+    const [searchInput, setSearchInput] = useState('');
 
-    // 2. ĐÃ XÓA HOÀN TOÀN useEffect và sessionStorage ở đây
+    // Hàm xử lý tìm kiếm
+    const handleSearch = (e) => {
+        e.preventDefault();
+        if (searchInput.trim()) {
+            router.get('/san-pham', { search: searchInput }, {
+                preserveScroll: true,
+            });
+        }
+    };
 
     return (
         <div className="min-h-screen bg-white font-sans">
@@ -26,13 +35,23 @@ export default function AppLayout({ children }) {
                     </Link>
 
                     {/* 2. Thanh Tìm Kiếm */}
-                    <div className="relative w-1/2 hidden md:block">
-                        <input
-                            type="text"
-                            placeholder="Tìm kiếm sản phẩm..."
-                            className="w-full border-2 border-primary-200 rounded-full py-3 px-5 focus:outline-none focus:border-accent-500 focus:ring-3 focus:ring-accent-200 bg-gradient-to-r from-primary-50 to-accent-50 font-semibold"
-                        />
-                    </div>
+                    <form onSubmit={handleSearch} className="relative w-1/2 hidden md:block">
+                        <div className="flex items-center gap-2">
+                            <input
+                                type="text"
+                                placeholder="Tìm kiếm sản phẩm..."
+                                value={searchInput}
+                                onChange={(e) => setSearchInput(e.target.value)}
+                                className="w-full border-2 border-primary-200 rounded-full py-3 px-5 focus:outline-none focus:border-accent-500 focus:ring-3 focus:ring-accent-200 bg-gradient-to-r from-primary-50 to-accent-50 font-semibold"
+                            />
+                            <button
+                                type="submit"
+                                className=" text-gray-500 px-4 py-3 rounded-full transition-all"
+                            >
+                                <FaSearch size={24} />
+                            </button>
+                        </div>
+                    </form>
 
                     {/* 3. Biểu tượng người dùng và giỏ hàng */}
                     <div className="flex items-center space-x-6">

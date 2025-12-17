@@ -44,16 +44,16 @@ export default function Navigation() {
                         Thời trang nữ
                     </Link>
                     <Link
-                        href="/san-pham?danh_muc_id=3"
+                        href="/san-pham?danh_muc_id=8"
                         className="font-semibold hover:text-gray-300 transition-colors"
                     >
                         Phụ kiện
                     </Link>
                     <Link
-                        href="/san-pham?sale=true"
-                        className="font-semibold text-red-400 hover:text-red-300 transition-colors"
+                        href="/san-pham?danh_muc_id=7"
+                        className="font-semibold hover:text-gray-300 transition-colors"
                     >
-                        SALE
+                        Giày
                     </Link>
                     {auth.user && auth.user.role === 'admin' && (
                         <Link

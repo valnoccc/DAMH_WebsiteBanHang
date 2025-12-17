@@ -12,12 +12,18 @@ class ProductController extends Controller
     /**
      * Display product listing page with filters.
      */
-   public function index(Request $request)
+    public function index(Request $request)
     {
         // 1. Khởi tạo query lấy Sản Phẩm kèm Hình Ảnh
-        $query = SanPham::with('hinhAnh'); 
+        $query = SanPham::with('hinhAnh');
 
-        // 2. LỌC THEO DANH MỤC
+        // 2. TÌM KIẾM THEO TÊN SẢN PHẨM
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where('ten_san_pham', 'LIKE', "%{$search}%");
+        }
+
+        // 3. LỌC THEO DANH MỤC
         $categoryName = 'Tất cả sản phẩm';
         if ($request->filled('danh_muc_id')) {
             $danhMucId = $request->danh_muc_id;
@@ -63,12 +69,13 @@ class ProductController extends Controller
         $products = $query->paginate(12)->withQueryString();
 
         // 7. Lấy danh sách Danh Mục để hiển thị ở Sidebar bên trái
-        $categories = DanhMuc::all(); 
+        $categories = DanhMuc::all();
 
         return Inertia::render('Product/Index', [
             'products' => $products,
             'categoryName' => $categoryName,
             'categories' => $categories, // Truyền danh sách danh mục sang React
+            'searchQuery' => $request->search ?? '', // Truyền query tìm kiếm để hiển thị lại trong input
         ]);
     }
 

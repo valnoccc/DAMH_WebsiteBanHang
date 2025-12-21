@@ -54,6 +54,13 @@ Route::middleware('auth')->group(function () {
 });
 
 // ==========================================
+// 4. PAYMENT ROUTES (Public - không cần auth)
+// ==========================================
+Route::get('/payments/momo-form', [CheckoutController::class, 'momoPaymentForm'])->name('payment.momo-form');
+Route::get('/payments/momo-return', [CheckoutController::class, 'momoReturn'])->name('payment.momo-return');
+Route::post('/payments/momo-notify', [CheckoutController::class, 'momoNotify'])->name('payment.momo-notify');
+
+// ==========================================
 // 3. ADMIN ROUTES (Chỉ Admin)
 // ==========================================
 Route::middleware(['auth', App\Http\Middleware\RoleMiddleware::class . ':admin'])
